@@ -157,7 +157,7 @@ export const workCategories: WorkCategory[] = [
       },
       {
         id: 503,
-        title: "On-Demand Personal Driver",
+        title: "Personal Driver",
         description: "A reliable driver whenever you need to get somewhere.",
         image: PersonalDriver,
       },

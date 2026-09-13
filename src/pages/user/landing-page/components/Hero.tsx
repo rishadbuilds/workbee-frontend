@@ -10,6 +10,9 @@ import heroTwo from "@/assets/hero/hero.cleaning.two.webp";
 import heroThree from "@/assets/hero/hero.three.gardening.webp";
 import heroFour from "@/assets/hero/hero.four.furnitureAssemply.jpg";
 import heroFive from "@/assets/hero/hero.five.carwash.jpg";
+import { CardDescription } from "@/components/ui/card";
+import { NeuralButton } from "@/components/ui/neural-button";
+import { ArrowUpRight } from "lucide-react";
 
 const heroImages = [heroOne, heroTwo, heroThree, heroFour, heroFive];
 
@@ -46,44 +49,19 @@ export default function Hero() {
               Assign your Work
               <br />
               to someone in just
-              <br />
-              90 seconds.
+              a minute.
             </h1>
 
-            <p
-              className="
-                mt-5
-                text-sm
-                leading-6
-                text-muted-foreground
-                sm:text-base
-                lg:text-lg
-              "
-            >
-              Overwhelmed by your daily to-do list? Let someone else handle it.
-              Just post what you need done, connect with local workers, set
-              your price, and get it finished fast.
-              <br className="hidden sm:block" />
-              Post a task now and reclaim your time!
-            </p>
+            <CardDescription className="mt-5 max-w-lg text-sm font-medium leading-6 text-foreground dark:text-muted-foreground sm:text-base">
+              Need something done? Post your task, connect with a local worker,
+              agree on a price, and get it done without the hassle.
+            </CardDescription>
 
             <div className="mt-7">
-              <Button
-                onClick={handleNavigate}
-                className="
-                  rounded-full
-                  px-6
-                  py-5
-                  text-base
-                  font-medium
-                  shadow-sm
-                  transition-all
-                  hover:-translate-y-0.5
-                  hover:shadow-md
-                "
-              >
-                Post your work
-              </Button>
+              <NeuralButton onClick={handleNavigate} className="group gap-2 w-32">
+                <span>Post work</span>
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </NeuralButton>
             </div>
           </div>
         </section>
