@@ -1,34 +1,34 @@
 import type { CarouselItem } from "../components/Carousel";
 
 // carousel one
-import FunitureAssemply from "@/assets/carouselOne/Furniture Assembly.png";
-import HeavyAssemply from "@/assets/carouselOne/heavy-assemply.webp";
-import VenueHelp from "@/assets/carouselOne/venue-work-help.avif";
+import FunitureAssemply from "../home-assets/carouselOne/Furniture Assembly.png";
+import HeavyAssemply from "../home-assets/carouselOne/heavy-assemply.webp";
+import VenueHelp from "../home-assets/carouselOne/venue-work-help.avif";
 
 // carousel two
-import MovingsHeaveItems from "@/assets/carouselTwo/Moving-Heavy-items.webp";
-import InHomeReArrange from "@/assets/carouselTwo/inhome-rearangings.jpg";
-import WoodWorkHelper from "@/assets/carouselTwo/woodwork-helper.jpg";
+import MovingsHeaveItems from "../home-assets/carouselTwo/Moving-Heavy-items.webp";
+import InHomeReArrange from "../home-assets/carouselTwo/inhome-rearangings.jpg";
+import WoodWorkHelper from "../home-assets/carouselTwo/woodwork-helper.jpg";
 
 // carousel three
-import DustCleanings from "@/assets/carouselThree/Dust-cleaings.webp";
-import HomeDeepCleanings from "@/assets/carouselThree/Home-deep-cleanings.jpg";
-import VehicleCleanings from "@/assets/carouselThree/vehicle-cleanings.png";
+import DustCleanings from "../home-assets/carouselThree/Dust-cleaings.webp";
+import HomeDeepCleanings from "../home-assets/carouselThree/Home-deep-cleanings.jpg";
+import VehicleCleanings from "../home-assets/carouselThree/vehicle-cleanings.png";
 
 // carousel four
-import WaterTankCleanings from "@/assets/carouselFour/water-tank-cleanings.webp";
-import ClothWashings from "@/assets/carouselFour/cloth-washings.jpg";
-import CarWashings from "@/assets/carouselFour/car-washings.jpg";
+import WaterTankCleanings from "../home-assets/carouselFour/water-tank-cleanings.webp";
+import ClothWashings from "../home-assets/carouselFour/cloth-washings.jpg";
+import CarWashings from "../home-assets/carouselFour/car-washings.jpg";
 
 // carousel five
-import GroceryDeliver from "@/assets/carouselFive/Grocery-deliver.webp";
-import PersonalPurchase from "@/assets/carouselFive/personal-purchase.webp";
-import PersonalDriver from "@/assets/carouselSix/personal-driver.webp";
+import GroceryDeliver from "../home-assets/carouselFive/Grocery-deliver.webp";
+import PersonalPurchase from "../home-assets/carouselFive/personal-purchase.webp";
+import PersonalDriver from "../home-assets/carouselSix/personal-driver.webp";
 
 // carousel six
-import GeneralPlumpings from "@/assets/carouselSix/general-plumbing-repair-under-kitchen-sink-with-tools-arranged-around-him-free-photo.jpeg";
-import HouseHelper from "@/assets/carouselSix/house-helper.jpg";
-import MechanicalHelpers from "@/assets/carouselSix/mechanicalhelpers.webp";
+import GeneralPlumpings from "../home-assets/carouselSix/general-plumbing-repair-under-kitchen-sink-with-tools-arranged-around-him-free-photo.jpeg";
+import HouseHelper from "../home-assets/carouselSix/house-helper.jpg";
+import MechanicalHelpers from "../home-assets/carouselSix/mechanicalhelpers.webp";
 
 export interface WorkCategory {
   id: number;
