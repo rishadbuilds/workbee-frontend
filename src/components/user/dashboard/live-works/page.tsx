@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Calendar, MapPin, Briefcase, IndianRupeeIcon,
   Wrench, TrendingUp, Flag, MessageSquare, Clock,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +27,7 @@ import { useLiveWorks, type LiveWork } from "@/hooks/useLiveWorks";
 
 type LiveTab = 'active' | 'completed';
 
-const TAB_CONFIG: { value: LiveTab; label: string; Icon: any }[] = [
+const TAB_CONFIG: { value: LiveTab; label: string; Icon: LucideIcon }[] = [
   { value: 'active', label: 'Active', Icon: TrendingUp },
   { value: 'completed', label: 'Completed', Icon: Flag },
 ];

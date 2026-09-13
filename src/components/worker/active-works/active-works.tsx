@@ -9,6 +9,7 @@ import { startOfDay, endOfDay } from "date-fns";
 import {
   Calendar, MapPin, Briefcase, IndianRupeeIcon,
   Wrench, TrendingUp, Flag, MessageSquare, ListChecks, ClipboardList,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,7 +49,7 @@ interface UpdateWorkPayload {
 type Bucket = 'all' | 'assigned' | 'started' | 'ongoing' | 'completed';
 
 // Tab config — order matters, drives both the pill list and the progress tracker
-const TAB_CONFIG: { value: Bucket; label: string; Icon: any }[] = [
+const TAB_CONFIG: { value: Bucket; label: string; Icon: LucideIcon }[] = [
   { value: 'all', label: 'All', Icon: ListChecks },
   { value: 'assigned', label: 'Assigned', Icon: ClipboardList },
   { value: 'started', label: 'Started', Icon: Wrench },

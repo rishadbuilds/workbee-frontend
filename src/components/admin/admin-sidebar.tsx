@@ -16,10 +16,8 @@ import {
   Users,
   UserCheck,
   UserPlus,
-  Briefcase,
   MessageSquare,
   ShieldAlert,
-  Wallet,
   CreditCard,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";

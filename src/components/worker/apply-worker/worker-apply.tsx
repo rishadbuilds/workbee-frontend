@@ -80,8 +80,6 @@ import {
   Fan,
   Building2,
   type LucideIcon,
-  CircleAlert,
-  Notebook,
   LucideNotebookPen,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"

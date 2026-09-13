@@ -16,7 +16,6 @@ import {
   MessageSquare,
   ShieldAlert,
   CreditCard,
-  Bell,
   User,
   BriefcaseBusiness,
   HardHat

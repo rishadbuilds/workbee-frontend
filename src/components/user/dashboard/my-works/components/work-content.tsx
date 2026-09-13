@@ -15,6 +15,7 @@ import {
     CheckCircle2,
     Clock3,
     Ban,
+    type LucideIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -77,7 +78,7 @@ import { useMyWorks, type WorkItem } from "@/hooks/useMyWorks";
 
 type Bucket = 'all' | 'active' | 'completed' | 'pending' | 'cancelled';
 
-const TAB_CONFIG: { value: Bucket; label: string; Icon: any }[] = [
+const TAB_CONFIG: { value: Bucket; label: string; Icon: LucideIcon }[] = [
     { value: 'all', label: 'All Works', Icon: ListChecks },
     { value: 'active', label: 'Active', Icon: TrendingUp },
     { value: 'completed', label: 'Completed', Icon: CheckCircle2 },

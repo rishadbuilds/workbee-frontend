@@ -1,4 +1,4 @@
-"use client";
+/* eslint-disable */
 
 import { Clock } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";

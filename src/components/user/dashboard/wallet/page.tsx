@@ -182,7 +182,6 @@ export default function UserWallet() {
   // see note below the code)
   const successCount = transactions.filter((t) => t.type === "payment" && t.status === "completed").length;
   const pendingCount = transactions.filter((t) => t.status === "pending").length;
-  const failedCount = transactions.filter((t) => t.status === "failed").length;
 
   if (loading && !wallet) {
     return (
