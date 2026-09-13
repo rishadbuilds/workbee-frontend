@@ -4,7 +4,7 @@ import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { UserRole } from "workbee-common";
 import { RouteSegments } from "@/constants/routes/route-segments";
 
-import Home from "@/pages/user/Home";
+import Home from "@/pages/user/landing-page/Home";
 import Login from "@/pages/user/Login";
 import Register from "@/pages/user/Register";
 import Otp from "@/pages/user/VerifyOtp";
@@ -21,6 +21,7 @@ import UserWallet from "@/components/user/dashboard/wallet/page";
 import ProfileSettings from "@/components/user/dashboard/profile-settings/page";
 import DashboardPostWork from "@/components/user/dashboard/post-work/page";
 import Disputes from "@/components/user/dashboard/disputes/page";
+import WhatIsWorkBee from "@/pages/user/what-is-workbee/WhatIsWorkBee";
 
 
 const UserRoute = () => {
@@ -33,6 +34,7 @@ const UserRoute = () => {
       <Route path={RouteSegments.USER.OTP} element={<Otp />} />
       <Route path={RouteSegments.USER.FORGOT_PASSWORD} element={<ForgotPassword />} />
       <Route path={RouteSegments.USER.RESET_PASSWORD} element={<ResetPassword />} />
+      <Route path={RouteSegments.USER.WHAT_IS_WORKBEE} element={<WhatIsWorkBee />} />
       
       {/* Protected Routes - User Only */}
       <Route 

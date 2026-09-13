@@ -212,7 +212,7 @@ const Navbar = () => {
           <li>
             <button
               onClick={() =>
-                handleNavigation("/questions")
+                handleNavigation("/what-is-workbee")
               }
               className="
                 text-muted-foreground

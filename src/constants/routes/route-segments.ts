@@ -15,6 +15,7 @@ export const RouteSegments = {
     PROFILE: "profile-settings",
     POST_WORK: "task-booking",
     DISPUTES: "disputes",
+    WHAT_IS_WORKBEE: "what-is-workbee",
   },
   
   ADMIN: {
