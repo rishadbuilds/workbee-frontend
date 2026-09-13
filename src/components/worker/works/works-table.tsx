@@ -5,12 +5,29 @@ import {
   MapPin,
   Filter,
 } from "lucide-react"
+
 import { WorkService } from "@/services/work-service"
 import { useDebounce } from "@/hooks/useDebounce"
 import axios from "axios"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import type { BadgeProps, PaginationInfo, SelectProps, Work, WorkFilters } from "./types/types"
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+import type {
+  BadgeProps,
+  PaginationInfo,
+  Work,
+  WorkFilters,
+} from "./types/types"
+
 import WorkDetailsModal from "./modals/WorkDetailsModal"
 
 // GEOLOCATION
@@ -102,40 +119,6 @@ const Badge = ({
     >
       {children}
     </span>
-  )
-}
-
-
-const Select = ({
-  value,
-  onChange,
-  children,
-  className = "",
-  disabled = false,
-}: SelectProps) => {
-  return (
-    <select
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      className={`
-        flex h-10
-        rounded-md
-        border border-border
-        bg-background
-        text-foreground
-        px-3 py-2
-        text-sm
-        focus:outline-none
-        focus:ring-2
-        focus:ring-ring
-        disabled:opacity-50
-        disabled:cursor-not-allowed
-        ${className}
-      `}
-    >
-      {children}
-    </select>
   )
 }
 
@@ -735,115 +718,102 @@ export default function WorkerWorksTable() {
                 DISTANCE FILTER
              */}
 
+          
             <div className="flex items-center gap-2">
-
-              <MapPin
-                className="
-                  w-4
-                  h-4
-                  text-muted-foreground
-                "
-              />
+              <MapPin className="h-4 w-4 text-muted-foreground" />
 
               <Select
                 value={distanceFilter}
-                onChange={(e) =>
-                  setDistanceFilter(
-                    e.target.value
-                  )
-                }
-                className="w-44"
+                onValueChange={setDistanceFilter}
                 disabled={!userLocation}
               >
-                <option value="all">
-                  All Distances
-                </option>
+                <SelectTrigger className="w-44">
+                  <SelectValue placeholder="Select distance" />
+                </SelectTrigger>
 
-                <option value="2km">
-                  Within 2 km
-                </option>
+                <SelectContent>
+                  <SelectItem value="all">
+                    All Distances
+                  </SelectItem>
 
-                <option value="5km">
-                  Within 5 km
-                </option>
+                  <SelectItem value="2km">
+                    Within 2 km
+                  </SelectItem>
 
-                <option value="8km">
-                  Within 8 km
-                </option>
+                  <SelectItem value="5km">
+                    Within 5 km
+                  </SelectItem>
 
-                <option value="10km">
-                  Within 10 km
-                </option>
+                  <SelectItem value="8km">
+                    Within 8 km
+                  </SelectItem>
 
-                <option value="15km">
-                  Within 15 km
-                </option>
+                  <SelectItem value="10km">
+                    Within 10 km
+                  </SelectItem>
 
-                <option value="20km">
-                  Within 20 km
-                </option>
+                  <SelectItem value="15km">
+                    Within 15 km
+                  </SelectItem>
 
-                <option value="30km">
-                  Within 30 km
-                </option>
+                  <SelectItem value="20km">
+                    Within 20 km
+                  </SelectItem>
 
-                <option value="50km">
-                  Within 50 km
-                </option>
+                  <SelectItem value="30km">
+                    Within 30 km
+                  </SelectItem>
+
+                  <SelectItem value="50km">
+                    Within 50 km
+                  </SelectItem>
+                </SelectContent>
               </Select>
-
             </div>
 
             {/* 
                 STATUS FILTER
              */}
 
-            <div className="flex items-center gap-2">
+          
 
-              <Filter
-                className="
-                  w-4
-                  h-4
-                  text-muted-foreground
-                "
-              />
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
 
               <Select
                 value={statusFilter}
-                onChange={(e) =>
-                  setStatusFilter(
-                    e.target.value
-                  )
-                }
-                className="w-40"
+                onValueChange={setStatusFilter}
               >
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
 
-                <option value="all">
-                  All Status
-                </option>
+                <SelectContent>
+                  <SelectItem value="all">
+                    All Status
+                  </SelectItem>
 
-                <option value="pending">
-                  Pending
-                </option>
+                  <SelectItem value="pending">
+                    Pending
+                  </SelectItem>
 
-                <option value="assigned">
-                  Assigned
-                </option>
+                  <SelectItem value="assigned">
+                    Assigned
+                  </SelectItem>
 
-                <option value="in-progress">
-                  In Progress
-                </option>
+                  <SelectItem value="in-progress">
+                    In Progress
+                  </SelectItem>
 
-                <option value="completed">
-                  Completed
-                </option>
+                  <SelectItem value="completed">
+                    Completed
+                  </SelectItem>
 
-                <option value="cancelled">
-                  Cancelled
-                </option>
-
+                  <SelectItem value="cancelled">
+                    Cancelled
+                  </SelectItem>
+                </SelectContent>
               </Select>
-
             </div>
 
           </div>
