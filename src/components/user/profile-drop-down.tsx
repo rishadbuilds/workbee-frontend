@@ -1,10 +1,12 @@
 import {
     Bell,
+    BriefcaseBusiness,
     CreditCard,
     LayoutDashboard,
     Lock,
     LogOut,
     Mail,
+    MessagesSquare,
     User,
     Users,
 } from "lucide-react";
@@ -21,6 +23,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import type { IUser } from "workbee-common";
 import { AppRoutes } from "@/constants/routes/app-routes";
+import { IconLiveView } from "@tabler/icons-react";
 
 interface ProfileDropDownMenuProps {
     user: IUser;
@@ -87,29 +90,41 @@ const ProfileDropDownMenu = ({ user, onLogout }: ProfileDropDownMenuProps) => {
                         <User />
                         Profile Settings
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Bell />
-                        Notifications
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    
+                    <DropdownMenuItem  onClick={() => navigate(AppRoutes.USER.DASHBOARD.PROFILE_SETTINGS)}>
                         <Mail />
                         Email Preferences
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem  onClick={() => navigate(AppRoutes.USER.DASHBOARD.PROFILE_SETTINGS)}>
                         <Lock />
                         Privacy & Security
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel>Billing</DropdownMenuLabel>
+                <DropdownMenuLabel>Messages & Works</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        <CreditCard />
-                        Payment Methods
+                    <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.MESSAGES)}>
+                        <MessagesSquare />
+                        My Messages
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.MY_WORKS)}>
+                        <BriefcaseBusiness />
+                        My Works
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.ACTIVE_WORKS)}>
+                        <IconLiveView />
+                        Live Works
+                    </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuLabel>Payment</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.WALLET)}>
+                        <CreditCard />
+                        Payments
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.WALLET)}>
                         <Users />
-                        Team Subscription
+                        Wallet
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
