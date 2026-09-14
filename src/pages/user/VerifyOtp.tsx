@@ -57,7 +57,7 @@ const VerifyOtp = () => {
   const handleResendOtp = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     const userId = AuthHelper.getUserId()
-    
+
     if (!userId) {
       toast.warning("User ID not found. Please register again.")
       navigate('/register')
@@ -65,10 +65,10 @@ const VerifyOtp = () => {
     }
 
     setIsResending(true)
-    
+
     try {
       const res = await AuthService.resendOtp({ userId })
-      
+
       if (res.data.success) {
         toast.success(res.data.message || 'OTP sent successfully to your email')
         setTimeLeft(60)
@@ -107,10 +107,10 @@ const VerifyOtp = () => {
 
       if (res.data.success) {
         const { accessToken, refreshToken, user } = res.data.data
-        
+
         AuthHelper.setAuth(accessToken, refreshToken, user)
-        
-        toast.success(res.data.message || `Welcome${user.name}`,{description: `Welcome to WorkBee ${user.name}`})
+
+        toast.success(res.data.message || `Welcome${user.name}`, { description: `Welcome to WorkBee ${user.name}` })
         navigate('/')
       } else {
         toast.error(res.data.message || 'OTP verification failed')
@@ -124,7 +124,7 @@ const VerifyOtp = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Enter verification code</CardTitle>
@@ -136,9 +136,9 @@ const VerifyOtp = () => {
               <Field>
                 <FieldLabel htmlFor="otp">Verification code</FieldLabel>
                 <div className="flex justify-center">
-                  <InputOTP 
-                    maxLength={5} 
-                    id="otp" 
+                  <InputOTP
+                    maxLength={5}
+                    id="otp"
                     value={otp}
                     onChange={(value) => setOtp(value)}
                     required
@@ -158,20 +158,20 @@ const VerifyOtp = () => {
               </Field>
 
               <FieldGroup>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full"
                   disabled={otp.length !== 5 || isVerifying}
                 >
                   {isVerifying ? "Verifying..." : "Verify"}
                 </Button>
-                
+
                 <FieldDescription className="text-center">
                   {canResend ? (
                     <>
                       Didn&apos;t receive the code?{" "}
-                      <a 
-                        href="#" 
+                      <a
+                        href="#"
                         onClick={handleResendOtp}
                         className="text-black hover:text-blue-800 font-medium underline"
                       >

@@ -186,7 +186,7 @@ export function LoginForm({
                                     name="email"
                                     value={form.email}
                                     onChange={handleChange}
-                                    placeholder="rishad@example.com"
+                                    placeholder="johndoe@example.com"
 
                                 />
                                 {errors.email && (

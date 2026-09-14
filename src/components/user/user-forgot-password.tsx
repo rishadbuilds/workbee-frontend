@@ -103,7 +103,7 @@ export function UserForgotPassword({
                                     name="email"
                                     value={form.email}
                                     onChange={handleChange}
-                                    placeholder="rishad@example.com"
+                                    placeholder="johndoe@example.com"
                                 />
                                 {errors.email && (
                                     <p className="text-xs text-red-800">{errors.email}</p>

@@ -15,6 +15,7 @@ export const AppRoutes = {
             ACTIVE_WORKS: "/user-dashboard/active-works",
             PROFILE_SETTINGS: "/user-dashboard/profile-settings",
             DISPUTES: "/user-dashboard/disputes",
+            WALLET: "/user-dashboard/user-wallet",
         },
     },
 
