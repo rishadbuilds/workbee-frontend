@@ -40,13 +40,10 @@ export default function WhatIsWorkBee() {
           </Badge>
 
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Less searching. Less waiting. More getting things done.
+            WorkBee makes finding local help simple for
+            everyone.
           </h2>
 
-          <p className="mt-4 text-muted-foreground">
-            WorkBee makes finding and offering local help simple for
-            everyone.
-          </p>
         </div>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

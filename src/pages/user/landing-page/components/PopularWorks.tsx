@@ -22,7 +22,7 @@ export default function PopularWorks() {
               items={category.items}
               baseWidth={250}
               autoplay={true}
-              autoplayDelay={2000}
+              autoplayDelay={4000}
               pauseOnHover={true}
               loop={true}
               round={false}
