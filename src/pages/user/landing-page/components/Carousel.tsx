@@ -104,10 +104,9 @@ function CarouselCard({
         flex-col
         overflow-hidden
         active:cursor-grabbing
-        ${
-          round
-            ? "items-center justify-center bg-background text-center"
-            : "items-start rounded-2xl border border-border bg-card"
+        ${round
+          ? "items-center justify-center bg-background text-center"
+          : "items-start rounded-2xl border border-border bg-card"
         }
       `}
       style={{
@@ -258,24 +257,45 @@ export default function Carousel({
   /*
    * Autoplay.
    */
+  
+  // Autoplay — skip ticking while the tab isn't visible
   useEffect(() => {
     if (!autoplay || items.length <= 1 || isHovered) {
       return;
     }
 
     const interval = window.setInterval(() => {
+      if (document.hidden) return; // don't advance while backgrounded
       setPosition((prev) => prev + 1);
     }, autoplayDelay);
 
-    return () => {
-      window.clearInterval(interval);
+    return () => window.clearInterval(interval);
+  }, [autoplay, autoplayDelay, isHovered, items.length]);
+
+  // Safety net: if we come back to a hidden tab with position out of range
+  // (e.g. animation was stalled and never snapped back), correct it immediately.
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden || !loop || items.length === 0) return;
+
+      setPosition((prev) => {
+        if (prev > 0 && prev <= items.length) return prev; // already valid
+
+        const corrected =
+          ((prev - 1) % items.length + items.length) % items.length + 1;
+
+        setIsJumping(true);
+        x.set(-corrected * trackItemOffset);
+        requestAnimationFrame(() => setIsJumping(false));
+
+        return corrected;
+      });
     };
-  }, [
-    autoplay,
-    autoplayDelay,
-    isHovered,
-    items.length,
-  ]);
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [loop, items.length, trackItemOffset, x]);
 
   /*
    * Reset position when items or loop changes.
@@ -298,8 +318,8 @@ export default function Carousel({
 
   const effectiveTransition: Transition = isJumping
     ? {
-        duration: 0,
-      }
+      duration: 0,
+    }
     : SPRING_OPTIONS;
 
   /*
@@ -314,6 +334,7 @@ export default function Carousel({
   /*
    * Handle animation complete and loop jumps.
    */
+
   const handleAnimationComplete = () => {
     setIsAnimating(false);
 
@@ -321,32 +342,16 @@ export default function Carousel({
       return;
     }
 
-    /*
-     * We render:
-     *
-     * [last] [1] [2] [3] [first]
-     *
-     * If we reach [first], instantly jump to [1].
-     */
-    if (position === items.length + 1) {
+    if (position >= items.length + 1) {
       setIsJumping(true);
       setPosition(1);
-
-      requestAnimationFrame(() => {
-        setIsJumping(false);
-      });
+      requestAnimationFrame(() => setIsJumping(false));
     }
 
-    /*
-     * If we reach [last], instantly jump to [last real item].
-     */
-    if (position === 0) {
+    if (position <= 0) {
       setIsJumping(true);
       setPosition(items.length);
-
-      requestAnimationFrame(() => {
-        setIsJumping(false);
-      });
+      requestAnimationFrame(() => setIsJumping(false));
     }
   };
 
@@ -393,15 +398,15 @@ export default function Carousel({
   const dragProps = loop
     ? {}
     : {
-        dragConstraints: {
-          left: -(items.length - 1) * trackItemOffset,
-          right: 0,
-        },
-      };
+      dragConstraints: {
+        left: -(items.length - 1) * trackItemOffset,
+        right: 0,
+      },
+    };
 
   const activeIndex = loop
     ? ((position - 1 + items.length) %
-        items.length)
+      items.length)
     : position;
 
   return (
@@ -411,10 +416,9 @@ export default function Carousel({
         relative
         overflow-hidden
         p-2
-        ${
-          round
-            ? "rounded-full border border-border"
-            : "rounded-[24px] border border-border"
+        ${round
+          ? "rounded-full border border-border"
+          : "rounded-[24px] border border-border"
         }
       `}
       style={{
@@ -436,10 +440,9 @@ export default function Carousel({
           width: "max-content",
           gap: `${GAP}px`,
           perspective: 1000,
-          perspectiveOrigin: `${
-            position * trackItemOffset +
+          perspectiveOrigin: `${position * trackItemOffset +
             itemWidth / 2
-          }px 50%`,
+            }px 50%`,
           x,
         }}
         animate={{
@@ -485,10 +488,9 @@ export default function Carousel({
                 w-2
                 rounded-full
                 transition-colors
-                ${
-                  activeIndex === index
-                    ? "bg-foreground"
-                    : "bg-muted-foreground/30"
+                ${activeIndex === index
+                  ? "bg-foreground"
+                  : "bg-muted-foreground/30"
                 }
               `}
               animate={{

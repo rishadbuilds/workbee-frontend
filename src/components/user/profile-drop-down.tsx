@@ -1,11 +1,11 @@
 import {
-    Bell,
-    BriefcaseBusiness,
     CreditCard,
+    Home,
     LayoutDashboard,
     Lock,
     LogOut,
     Mail,
+    MapPinHouse,
     MessagesSquare,
     User,
     Users,
@@ -108,11 +108,11 @@ const ProfileDropDownMenu = ({ user, onLogout }: ProfileDropDownMenuProps) => {
                         My Messages
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.MY_WORKS)}>
-                        <BriefcaseBusiness />
+                        <Home />
                         My Works
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.ACTIVE_WORKS)}>
-                        <IconLiveView />
+                        <MapPinHouse />
                         Live Works
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
