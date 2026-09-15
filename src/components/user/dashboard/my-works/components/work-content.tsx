@@ -502,12 +502,11 @@ export default function WorkContent() {
 
     if (counts.all === 0) {
         return (
-            <Card className="border-border bg-card">
+            <Card className="w-full border-border bg-card">
                 <CardContent className="flex min-h-[240px] flex-col items-center justify-center text-center">
                     <div className="mb-4 rounded-full bg-muted p-4">
                         <Briefcase className="h-6 w-6 text-muted-foreground" />
                     </div>
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">My Works</h1>
                     <p className="mt-2 max-w-md text-sm text-muted-foreground">
                         No works found. Start by posting your first work!
                     </p>

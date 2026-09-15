@@ -26,6 +26,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface DisputeActionItem {
   actionType: string;
@@ -439,14 +440,17 @@ export default function Disputes() {
 
   if (disputes.length === 0) {
     return (
-      <div className="w-full space-y-4 p-4 sm:p-6">
-        <div className="rounded-xl border border-border bg-card py-12 text-center">
-          <MessageSquareWarning className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">
-            You haven't raised any complaints yet.
-          </p>
-        </div>
-      </div>
+     
+      <Card className="w-full border-border bg-card">
+                <CardContent className="flex min-h-[240px] flex-col items-center justify-center text-center">
+                    <div className="mb-4 rounded-full bg-muted p-4">
+                        <MessageSquareWarning className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                         You haven't raised any complaints yet.
+                    </p>
+                </CardContent>
+            </Card>
     );
   }
 

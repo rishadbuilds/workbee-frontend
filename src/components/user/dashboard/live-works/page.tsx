@@ -65,9 +65,8 @@ function ProgressDisplay({ progress }: { progress?: string }) {
           return (
             <div key={step.value} className="flex items-center flex-1">
               <div
-                className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 transition-all ${
-                  active ? `${step.bg} ${step.border} ${step.textColor}` : done ? 'bg-muted border-border text-muted-foreground' : 'bg-background border-border text-muted-foreground/40'
-                }`}
+                className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 transition-all ${active ? `${step.bg} ${step.border} ${step.textColor}` : done ? 'bg-muted border-border text-muted-foreground' : 'bg-background border-border text-muted-foreground/40'
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 <span className="text-xs font-medium">{step.label}</span>
@@ -270,14 +269,17 @@ export default function LiveWorks() {
 
   if (counts.active === 0 && counts.completed === 0) {
     return (
-      <div className="space-y-6 p-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Live Works</h1>
-          <p className="text-muted-foreground mt-2">
+
+      <Card className="w-full border-border bg-card">
+        <CardContent className="flex min-h-[240px] flex-col items-center justify-center text-center">
+          <div className="mb-4 rounded-full bg-muted p-4">
+            <Briefcase className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <p className="mt-2 max-w-md text-sm text-muted-foreground">
             No works yet. Once a worker confirms a deal, it will appear here for live tracking.
           </p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
