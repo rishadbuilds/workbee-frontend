@@ -4,7 +4,7 @@ import { socketService } from '@/services/chat-socket-service';
 import { ChatService } from '@/services/chat-service';
 import { WorkService } from '@/services/work-service';
 import { AuthHelper } from '@/utils/auth-helper';
-import { ArrowLeft, Search, Send, User } from 'lucide-react';
+import { ArrowLeft, MessageCircle, MessagesSquare, Search, Send, User } from 'lucide-react';
 import { MediaUploadButton } from '@/components/chat/MediaUploadButton';
 import type { UploadedMedia } from '@/components/chat/MediaUploadButton';
 import { MediaMessage } from '@/components/chat/MediaMessage';
@@ -768,8 +768,8 @@ export default function ClientMessages() {
                     <div className="min-w-0 flex-1">
                       <h3
                         className={`truncate ${unread > 0
-                            ? 'font-semibold text-foreground'
-                            : 'font-medium text-foreground'
+                          ? 'font-semibold text-foreground'
+                          : 'font-medium text-foreground'
                           }`}
                       >
                         {otherUser?.name || 'Unknown User'}
@@ -777,8 +777,8 @@ export default function ClientMessages() {
 
                       <p
                         className={`truncate text-sm ${unread > 0
-                            ? 'font-medium text-foreground/80'
-                            : 'text-muted-foreground'
+                          ? 'font-medium text-foreground/80'
+                          : 'text-muted-foreground'
                           }`}
                       >
                         {chat.lastMessage || 'No messages yet'}
@@ -984,8 +984,9 @@ export default function ClientMessages() {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            Select a conversation to start messaging
+          <div className="flex-1 flex items-center justify-center gap-2 text-muted-foreground">
+            <MessagesSquare />
+            <span>Select a conversation to start messaging</span>
           </div>
         )}
       </div>

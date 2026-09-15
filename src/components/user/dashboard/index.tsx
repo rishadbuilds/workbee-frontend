@@ -75,11 +75,9 @@ const UserDashboard = () => {
 
             <div className="space-y-0.5">
                 <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-                    Settings
+                    Dashboard
                 </h1>
-                <p className="text-muted-foreground">
-                    Manage your account settings and set e-mail preferences.
-                </p>
+               <p className="text-muted-foreground"> Manage your works, messages, payments, wallet, disputes, and account settings in one place. </p>
             </div>
             <Separator className="my-4 lg:my-6" />
             <div className="flex flex-1 flex-col space-y-2 md:space-y-2 overflow-hidden lg:flex-row lg:space-x-12 lg:space-y-0">
@@ -101,16 +99,6 @@ const sidebarNavItems = [
         href: '/user-dashboard/works',
     },
     {
-        title: 'Wallet',
-        icon: <Wallet2Icon size={18} />,
-        href: '/user-dashboard/user-wallet',
-    },
-    // {
-    //     title: 'My Works',
-    //     icon: <WorkflowIcon size={18} />,
-    //     href: '/user-dashboard/works',
-    // },
-    {
         title: 'Active Works',
         icon: <LucideWorkflow size={18} />,
         href: '/user-dashboard/active-works',
@@ -129,6 +117,11 @@ const sidebarNavItems = [
         title: 'Disputes',
         icon: <Notebook size={18} />,
         href: '/user-dashboard/disputes',
+    },
+    {
+        title: 'Wallet',
+        icon: <Wallet2Icon size={18} />,
+        href: '/user-dashboard/user-wallet',
     },
     {
         title: 'Account Settings',

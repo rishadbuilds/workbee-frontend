@@ -107,8 +107,8 @@ export const workCategories: WorkCategory[] = [
       },
       {
         id: 303,
-        title: "Vehicle Interior & Exterior Detailing",
-        description: "Full detailing to get your car looking new again.",
+        title: "Vehicle Interior & Exterior Cleanings and Washing",
+        description: "Full detailing your vehicles",
         image: VehicleCleanings,
       },
     ],
@@ -145,8 +145,8 @@ export const workCategories: WorkCategory[] = [
     items: [
       {
         id: 501,
-        title: "Grocery Pickup & Delivery",
-        description: "Groceries picked, packed, and delivered to your door.",
+        title: "Grocery Purchasing & Delivery",
+        description: "Groceries purchase, picked, packed, and delivered to your door.",
         image: GroceryDeliver,
       },
       {

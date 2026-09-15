@@ -113,7 +113,7 @@ const ProfileDropDownMenu = ({ user, onLogout }: ProfileDropDownMenuProps) => {
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate(AppRoutes.USER.DASHBOARD.ACTIVE_WORKS)}>
                         <MapPinHouse />
-                        Live Works
+                        My Works Progress
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuLabel>Payment</DropdownMenuLabel>
