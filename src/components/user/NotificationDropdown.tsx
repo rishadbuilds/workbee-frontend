@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Bell, CalendarDays, CheckCheck, ClipboardList, CreditCard, MessageCircle } from "lucide-react";
+import { Bell, CalendarDays, CheckCheck, ClipboardList, CreditCard, HandCoins, MessageCircle } from "lucide-react";
 import { NotificationService } from "@/services/notification-service";
 import type { Notification } from "@/services/notification-service";
 import { notificationSocketService } from "@/services/notification-socket-service";
@@ -134,13 +134,21 @@ const NotificationDropdown = ({ onNotificationClick }: NotificationDropdownProps
       });
     }
     if (notification.type === "WORK_UPDATE" && notification.data?.workId) {
-      navigate(AppRoutes.USER.DASHBOARD.ACTIVE_WORKS,{
-          state: {
-            workId:
-              notification.data.workId,
-          },
-        }
+      navigate(AppRoutes.USER.DASHBOARD.ACTIVE_WORKS, {
+        state: {
+          workId:
+            notification.data.workId,
+        },
+      }
       );
+    }
+
+    if (notification.type === "BID_OFFER" && notification.data?.chatId) {
+      navigate(AppRoutes.USER.DASHBOARD.MESSAGES /* or WORKER.DASHBOARD.CLIENT_MESSAGES */, {
+        state: {
+          chatId: notification.data.chatId,
+        },
+      });
     }
 
     setIsOpen(false);
@@ -176,6 +184,10 @@ const NotificationDropdown = ({ onNotificationClick }: NotificationDropdownProps
 
       case "PAYMENT":
         return <CreditCard className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />;
+
+      case "BID_OFFER":
+        return <HandCoins className="w-5 h-5 text-orange-500 dark:text-orange-400" />; // import HandCoins from lucide-react
+
 
       default:
         return <Bell className="w-5 h-5 text-muted-foreground" />;

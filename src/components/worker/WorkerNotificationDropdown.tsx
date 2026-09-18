@@ -5,6 +5,7 @@ import {
   CheckCheck,
   ClipboardList,
   CreditCard,
+  HandCoins,
   MessageCircle,
 } from "lucide-react";
 import { NotificationService } from "@/services/notification-service";
@@ -145,6 +146,14 @@ const WorkerNotificationDropdown = ({
       });
     }
 
+    if (notification.type === "BID_OFFER" && notification.data?.chatId) {
+      navigate(AppRoutes.USER.DASHBOARD.MESSAGES /* or WORKER.DASHBOARD.CLIENT_MESSAGES */, {
+        state: {
+          chatId: notification.data.chatId,
+        },
+      });
+    }
+
     setIsOpen(false);
     onNotificationClick?.(notification);
   };
@@ -171,6 +180,9 @@ const WorkerNotificationDropdown = ({
         return <CalendarDays className="w-5 h-5 text-green-500 dark:text-green-400" />;
       case "PAYMENT":
         return <CreditCard className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />;
+      case "BID_OFFER":
+        return <HandCoins className="w-5 h-5 text-orange-500 dark:text-orange-400" />;
+
       default:
         return <Bell className="w-5 h-5 text-muted-foreground" />;
     }
