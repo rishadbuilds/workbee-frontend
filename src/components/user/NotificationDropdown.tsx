@@ -144,10 +144,16 @@ const NotificationDropdown = ({ onNotificationClick }: NotificationDropdownProps
     }
 
     if (notification.type === "BID_OFFER" && notification.data?.chatId) {
-      navigate(AppRoutes.USER.DASHBOARD.MESSAGES /* or WORKER.DASHBOARD.CLIENT_MESSAGES */, {
+      navigate(AppRoutes.USER.DASHBOARD.MESSAGES , {
         state: {
           chatId: notification.data.chatId,
         },
+      });
+    }
+
+    if (notification.type === "BID_RESPONSE" && notification.data?.chatId) {
+      navigate(AppRoutes.WORKER.DASHBOARD.CLIENT_MESSAGES , {
+        state: { chatId: notification.data.chatId },
       });
     }
 
@@ -186,8 +192,10 @@ const NotificationDropdown = ({ onNotificationClick }: NotificationDropdownProps
         return <CreditCard className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />;
 
       case "BID_OFFER":
-        return <HandCoins className="w-5 h-5 text-orange-500 dark:text-orange-400" />; // import HandCoins from lucide-react
+        return <HandCoins className="w-5 h-5 text-orange-500 dark:text-orange-400" />;
 
+      case "BID_RESPONSE":
+        return <HandCoins className="w-5 h-5 text-orange-500 dark:text-orange-400" />;
 
       default:
         return <Bell className="w-5 h-5 text-muted-foreground" />;
