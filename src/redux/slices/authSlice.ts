@@ -7,7 +7,7 @@ interface AuthState {
   isLoggedIn: boolean;
 }
 
-// Start from whatever is already in localStorage so a page refresh keeps you logged in
+// Start from whatever is already in localStorage so a page refresh keeps logged in
 const initialState: AuthState = {
   user: AuthHelper.getUser(),
   isLoggedIn: AuthHelper.isLoggedIn(),

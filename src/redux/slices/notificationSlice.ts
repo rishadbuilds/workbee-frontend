@@ -47,4 +47,5 @@ export const {
   markNotificationRead,
   markAllNotificationsRead,
 } = notificationSlice.actions;
+
 export default notificationSlice.reducer;
