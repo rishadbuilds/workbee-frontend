@@ -18,7 +18,8 @@ import {
   CreditCard,
   User,
   BriefcaseBusiness,
-  HardHat
+  HardHat,
+  SmilePlus
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -44,9 +45,9 @@ const items = [
   //   icon: Bell,
   // },
   {
-    title: "Feedbacks",
+    title: "Reviews & Feedbacks",
     route: "/worker/worker-dashboard/feedbacks",
-    icon: MessageSquare, 
+    icon: SmilePlus, 
   },
   {
     title: "Disputes",

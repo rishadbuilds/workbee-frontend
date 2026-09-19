@@ -14,6 +14,7 @@ import ActiveWorks from "@/components/worker/active-works/active-works";
 import WorkerWallet from "@/components/worker/wallet/wallet";
 import WorkerAccountSettings from "@/components/worker/profile/account-settings";
 import WorkerDisputes from "@/components/worker/disputes/page";
+import Feedbacks from "@/components/worker/feedbacks/page";
 
 const WorkerRoutes = () => {
     return (
@@ -38,6 +39,7 @@ const WorkerRoutes = () => {
                 <Route path={RouteSegments.WORKER.WALLET} element={<WorkerWallet/>} />
                 <Route path={RouteSegments.WORKER.ACCOUNT} element={<WorkerAccountSettings/>} />
                 <Route path={RouteSegments.WORKER.WORKER_DISPUTES} element={<WorkerDisputes/>} />
+                <Route path={RouteSegments.WORKER.FEEDBACKS} element={<Feedbacks/>} />
             </Route>
         </Routes>
     )
