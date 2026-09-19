@@ -14,6 +14,14 @@ import { notificationSocketService } from "@/services/notification-socket-servic
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { AppRoutes } from "@/constants/routes/app-routes";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  setNotifications,
+  addNotification,
+  markNotificationRead,
+  markAllNotificationsRead,
+  selectUnreadCount,
+} from "@/redux/slices/notificationSlice";
 
 interface NotificationDropdownProps {
   onNotificationClick?: (notification: Notification) => void;
@@ -24,30 +32,24 @@ type TabType = "unread" | "all";
 const WorkerNotificationDropdown = ({
   onNotificationClick,
 }: NotificationDropdownProps) => {
+  const dispatch = useAppDispatch();
+  const notifications = useAppSelector((state) => state.notification.items);
+  const unreadCount = useAppSelector(selectUnreadCount);
+
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("unread");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   const displayedNotifications =
     activeTab === "unread"
       ? notifications.filter((n) => !n.isRead)
       : notifications;
 
   const handleNewNotification = useCallback((notification: Notification) => {
-    setNotifications((prev) => {
-      const exists = prev.find((n) => n.id === notification.id);
-      if (exists) return prev;
-      return [notification, ...prev];
-    });
-
-    if (!notification.isRead) {
-      setUnreadCount((prev) => prev + 1);
-    }
+    dispatch(addNotification(notification));
 
     if (window.Notification?.permission === "granted") {
       new window.Notification(notification.title, {
@@ -55,7 +57,7 @@ const WorkerNotificationDropdown = ({
         icon: "/logo.png",
       });
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     loadNotifications();
@@ -88,7 +90,7 @@ const WorkerNotificationDropdown = ({
     try {
       setLoading(true);
       const response = await NotificationService.getNotifications(50, 0);
-      setNotifications(response.data.data || []);
+      dispatch(setNotifications(response.data.data || []));
     } catch (error) {
       console.error("Failed to load notifications:", error);
     } finally {
@@ -106,14 +108,7 @@ const WorkerNotificationDropdown = ({
 
     try {
       await NotificationService.markAsRead(notification.id);
-
-      setNotifications((prev) =>
-        prev.map((n) =>
-          n.id === notification.id ? { ...n, isRead: true } : n
-        )
-      );
-
-      setUnreadCount((prev) => Math.max(0, prev - 1));
+      dispatch(markNotificationRead(notification.id));
     } catch (error) {
       console.error("Failed to mark as read:", error);
     }
@@ -123,14 +118,7 @@ const WorkerNotificationDropdown = ({
     if (!notification.isRead) {
       try {
         await NotificationService.markAsRead(notification.id);
-
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === notification.id ? { ...n, isRead: true } : n
-          )
-        );
-
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+        dispatch(markNotificationRead(notification.id));
       } catch (error) {
         console.error("Failed to mark as read:", error);
       }
@@ -167,10 +155,7 @@ const WorkerNotificationDropdown = ({
   const handleMarkAllAsRead = async () => {
     try {
       await NotificationService.markAllAsRead();
-
-      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-
-      setUnreadCount(0);
+      dispatch(markAllNotificationsRead());
     } catch (error) {
       console.error("Failed to mark all as read:", error);
     }

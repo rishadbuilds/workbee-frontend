@@ -25,11 +25,15 @@ import { AppRoutes } from "@/constants/routes/app-routes"
 import { toast } from "sonner"
 import { emailRegex } from "@/constants/regex/regex"
 import { PhoneInput } from "../ui/phone-input"
+import { useAppDispatch } from "@/redux/hooks"
+import { setCredentials } from "@/redux/slices/authSlice"
 
 export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+    const dispatch = useAppDispatch();
+
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -170,6 +174,7 @@ export function RegisterForm({
 
                 if (accessToken && refreshToken && user) {
                     AuthHelper.setAuth(accessToken, refreshToken, user);
+                    dispatch(setCredentials(user)); 
                     toast.success(res.data.message || "Google Auth Successful");
 
                     if (user.role === 'admin') {

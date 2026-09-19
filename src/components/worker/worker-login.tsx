@@ -24,12 +24,16 @@ import { getErrorMessage } from "@/utils/error-helper"
 import { AppRoutes } from "@/constants/routes/app-routes"
 import { toast } from "sonner"
 import { emailRegex } from "@/constants/regex/regex"
+import { setCredentials } from "@/redux/slices/authSlice"
+import { useAppDispatch } from "@/redux/hooks"
 
 export function WorkerLoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
 
+    const dispatch = useAppDispatch();
+    
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -109,7 +113,7 @@ export function WorkerLoginForm({
                     }
 
                     AuthHelper.setAuth(accessToken, refreshToken, worker);
-
+                    dispatch(setCredentials(worker)); 
                     toast.success(result.data.message || "Worker login successful");
                     navigate(AppRoutes.WORKER.DASHBOARD.DASH);
                 } else {

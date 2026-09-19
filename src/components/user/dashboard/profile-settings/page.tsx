@@ -18,8 +18,9 @@ import {
   X,
 } from "lucide-react";
 
-import type { UserProfileData } from "./types/types";
 import { AuthService } from "@/services/auth-service";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setUserProfile, patchUserProfile } from "@/redux/slices/profileSlice";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -60,8 +61,8 @@ const TABS = [
 type Tab = (typeof TABS)[number]["value"];
 
 export default function ProfileSettings() {
-  const [userProfileData, setUserProfileData] =
-    useState<UserProfileData | null>(null);
+  const dispatch = useAppDispatch();
+  const userProfileData = useAppSelector((state) => state.userProfile.profile);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -89,7 +90,7 @@ export default function ProfileSettings() {
         if (response.data.success) {
           const data = response.data.data;
 
-          setUserProfileData(data);
+          dispatch(setUserProfile(data));
 
           setEditData({
             name: data.name ?? "",
@@ -105,7 +106,7 @@ export default function ProfileSettings() {
     };
 
     userDetails();
-  }, []);
+  }, [dispatch]);
 
   // Start editing
 
@@ -163,7 +164,7 @@ export default function ProfileSettings() {
       if (response.data.success) {
         const updatedData = response.data.data;
 
-        setUserProfileData(updatedData);
+        dispatch(setUserProfile(updatedData));
 
         setEditData({
           name: updatedData.name ?? "",
@@ -290,14 +291,8 @@ export default function ProfileSettings() {
         });
 
       if (saveResponse.data.success) {
-        setUserProfileData((prev) =>
-          prev
-            ? {
-              ...prev,
-              userProfileImage: secure_url,
-            }
-            : prev
-        );
+        // updates the profile page AND the navbar avatar
+        dispatch(patchUserProfile({ userProfileImage: secure_url }));
 
         toast.success("Profile image updated successfully");
       }

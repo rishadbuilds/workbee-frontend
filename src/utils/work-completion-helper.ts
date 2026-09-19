@@ -6,8 +6,7 @@ export async function notifyWorkCompleted(workId: string): Promise<void> {
     await PaymentService.notifyWorkCompleted(workId);
     console.log(`[WorkCompletion] Payout scheduled for work ${workId}`);
   } catch (err) {
-    console.error(
-      `[WorkCompletion] Failed to schedule payout for work ${workId}:`,
+    console.error(`[WorkCompletion] Failed to schedule payout for work ${workId}:`,
       getErrorMessage(err)
     );
   }

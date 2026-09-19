@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sun,
@@ -17,6 +17,10 @@ import { UserRole, type IUser } from "workbee-common";
 import { AppRoutes } from "@/constants/routes/app-routes";
 import { toast } from "sonner";
 
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setCredentials, clearCredentials } from "@/redux/slices/authSlice";
+import { setUserProfile } from "@/redux/slices/profileSlice";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +29,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
+  const profile = useAppSelector((state) => state.userProfile.profile);
 
   const navigate = useNavigate();
   const socketConnectedRef = useRef(false);
@@ -49,7 +55,7 @@ const Navbar = () => {
 
           if (!res.data.success) {
             AuthHelper.clearAuth();
-            setUser(null);
+            dispatch(clearCredentials());
             return;
           }
 
@@ -57,20 +63,20 @@ const Navbar = () => {
         }
 
         // Get profile data
-        const profileResponse =
-          await AuthService.getUserProfileData();
+        const profileResponse = await AuthService.getUserProfileData();
 
         if (profileResponse.data.success) {
           const profileData = profileResponse.data.data;
 
+          dispatch(setUserProfile(profileData));
+
           loggedUser = {
             ...loggedUser,
-            profileImage:
-              profileData.userProfileImage || "",
+            profileImage: profileData.userProfileImage || "",
           };
         }
 
-        setUser(loggedUser);
+        dispatch(setCredentials(loggedUser));
 
         AuthHelper.setUser(loggedUser);
         AuthHelper.setUserId(loggedUser.id);
@@ -82,13 +88,10 @@ const Navbar = () => {
           notificationSocketService.connect(accessToken);
         }
       } catch (error) {
-        console.error(
-          "User verification failed:",
-          error
-        );
+        console.error("User verification failed:", error);
 
         AuthHelper.clearAuth();
-        setUser(null);
+        dispatch(clearCredentials());
       }
     };
 
@@ -97,7 +100,7 @@ const Navbar = () => {
     return () => {
       socketConnectedRef.current = false;
     };
-  }, []);
+  }, [dispatch]);
 
   const handleLogout = async () => {
     try {
@@ -109,7 +112,8 @@ const Navbar = () => {
 
       AuthHelper.clearAuth();
 
-      setUser(null);
+      // clears auth + profile + notifications in Redux
+      dispatch(clearCredentials());
 
       navigate(AppRoutes.USER.HOME);
 

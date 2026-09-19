@@ -25,11 +25,15 @@ import { getErrorMessage } from "@/utils/error-helper"
 import { AppRoutes } from "@/constants/routes/app-routes"
 import { toast } from "sonner"
 import { emailRegex } from "@/constants/regex/regex"
+import { useAppDispatch } from "@/redux/hooks"
+import { setCredentials } from "@/redux/slices/authSlice"
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+
+    const dispatch = useAppDispatch();
 
     const [form, setForm] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
@@ -98,6 +102,7 @@ export function LoginForm({
                     }
 
                     AuthHelper.setAuth(accessToken, refreshToken, user);
+                    dispatch(setCredentials(user)); 
                     toast.success("Logged Successfully")
                     navigate(AppRoutes.USER.HOME);
                 } else {
@@ -131,6 +136,7 @@ export function LoginForm({
 
                 if (accessToken && refreshToken && user) {
                     AuthHelper.setAuth(accessToken, refreshToken, user);
+                    dispatch(setCredentials(user)); 
                     toast.success("Google Auth Successful")
                     if (user.role === 'admin') {
                         navigate('/admin/dashboard');

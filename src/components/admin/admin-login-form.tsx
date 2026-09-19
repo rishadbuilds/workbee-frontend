@@ -22,11 +22,15 @@ import { getErrorMessage } from "@/utils/error-helper"
 import { AppRoutes } from "@/constants/routes/app-routes"
 import { toast } from "sonner"
 import { emailRegex } from "@/constants/regex/regex"
+import { useAppDispatch } from "@/redux/hooks"
+import { setCredentials } from "@/redux/slices/authSlice"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+  const dispatch = useAppDispatch();
 
   const [form, setForm] = useState({
     email: "",
@@ -104,7 +108,7 @@ export function LoginForm({
           }
 
           AuthHelper.setAuth(accessToken, refreshToken, user);
-
+          dispatch(setCredentials(user));
           toast.success("Admin login successful");
 
           navigate(AppRoutes.ADMIN.DASHBOARD.DASH);
