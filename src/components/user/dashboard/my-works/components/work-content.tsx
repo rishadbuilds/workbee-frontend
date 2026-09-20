@@ -16,6 +16,7 @@ import {
     Clock3,
     Ban,
     type LucideIcon,
+    Eye,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,19 +35,10 @@ import { Badge } from "@/components/ui/badge";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 
 import { Separator } from "@/components/ui/separator";
 
@@ -75,6 +67,7 @@ import {
 
 import { getErrorMessage } from "@/utils/error-helper";
 import { useMyWorks, type WorkItem } from "@/hooks/useMyWorks";
+import { toast } from "sonner";
 
 type Bucket = 'all' | 'active' | 'completed' | 'pending' | 'cancelled';
 
@@ -161,8 +154,7 @@ function EditModal({ work, isOpen, onClose, onUpdated }: EditModalProps) {
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] overflow-y-auto sm:max-w-4xl md:max-w-5xl">
                 <DialogHeader>
-                    <DialogTitle className="text-foreground">Edit Work</DialogTitle>
-                    <DialogDescription>Update your work details below.</DialogDescription>
+                    <DialogTitle className="text-foreground">Your Work Details</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-5 py-4">
@@ -198,23 +190,6 @@ function EditModal({ work, isOpen, onClose, onUpdated }: EditModalProps) {
                             <Label htmlFor="budget">Budget (₹)</Label>
                             <Input id="budget" name="budget" type="number" value={formData.budget || ""} onChange={handleChange} min="0" step="0.01" />
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="status">Status</Label>
-                            <Select value={formData.status || "pending"} onValueChange={handleSelectChange}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {/* Real statuses only — "active" was never a valid value in
-                                        the backend, which is what broke the My Works tab before. */}
-                                    <SelectItem value="pending">Pending</SelectItem>
-                                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <p className="text-xs text-muted-foreground">
-                                Assigned / in-progress / completed are set automatically as the worker updates progress.
-                            </p>
-                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -235,10 +210,10 @@ function EditModal({ work, isOpen, onClose, onUpdated }: EditModalProps) {
 
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
-                    <Button onClick={handleSubmit} disabled={isSubmitting}>
+                    {/* <Button onClick={handleSubmit} disabled={isSubmitting}>
                         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         {isSubmitting ? "Updating..." : "Update Work"}
-                    </Button>
+                    </Button> */}
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -370,8 +345,8 @@ function WorkCard({
 
                 <div className="flex flex-wrap gap-2">
                     <Button variant="outline" onClick={() => onEdit(work)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Work Details
                     </Button>
                     <Button
                         variant="default"
@@ -445,7 +420,7 @@ export default function WorkContent() {
         try {
             const res = await WorkService.deleteMyWork(deleteWorkId);
             if (res.data.success) {
-                alert("Deleted successfully");
+                toast.warning("Deleted successfully");
                 await refetch();
             } else {
                 alert("Error while deleting work");
