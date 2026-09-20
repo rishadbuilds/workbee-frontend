@@ -1,7 +1,6 @@
 import { WorkService } from "@/services/work-service";
 import { useEffect, useState } from "react";
 import {
-    Edit,
     Trash2,
     Calendar,
     MapPin,
@@ -81,139 +80,245 @@ const TAB_CONFIG: { value: Bucket; label: string; Icon: LucideIcon }[] = [
 
 const ITEMS_PER_PAGE = 6;
 
-export interface UpdateWorkDto {
-    workTitle?: string;
-    workCategory?: string;
-    workType?: string;
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-    budget?: number;
-    status?: string;
-    workerId?: string;
-    manualAddress?: string;
-    landmark?: string;
-}
-
-interface EditModalProps {
+interface ViewWorkModalProps {
     work: WorkItem;
     isOpen: boolean;
     onClose: () => void;
-    onUpdated: () => void;
 }
 
-/*                              EDIT WORK MODAL                               */
-
-function EditModal({ work, isOpen, onClose, onUpdated }: EditModalProps) {
-    const [formData, setFormData] = useState<WorkItem>(work);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    useEffect(() => {
-        setFormData(work);
-    }, [work]);
-
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: name === "budget" ? (value ? Number(value) : undefined) : value,
-        }));
-    };
-
-    const handleSelectChange = (value: string) => {
-        setFormData((prev) => ({ ...prev, status: value }));
-    };
-
-    const handleSubmit = async () => {
-        if (!formData.workTitle || !formData.workCategory || !formData.workType) {
-            alert("Please fill in all required fields");
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
-            const response = await WorkService.updateWork(formData.id, formData);
-            if (response.data.success) {
-                onUpdated();
-                onClose();
-                alert("Work updated successfully!");
-            } else {
-                alert(response.data.message || "Failed to update work");
-            }
-        } catch (error) {
-            console.error("Error updating work:", error);
-            alert(getErrorMessage(error));
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
+function ViewWorkModal({ work, isOpen, onClose }: ViewWorkModalProps) {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] overflow-y-auto sm:max-w-4xl md:max-w-5xl">
                 <DialogHeader>
-                    <DialogTitle className="text-foreground">Your Work Details</DialogTitle>
+                    <DialogTitle className="text-foreground">
+                        Work Details
+                    </DialogTitle>
                 </DialogHeader>
 
-                <div className="space-y-5 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="workTitle">Work Title *</Label>
-                        <Input id="workTitle" name="workTitle" value={formData.workTitle} onChange={handleChange} required />
-                    </div>
+                <div className="space-y-6 py-4">
+                    {/* Basic Information */}
+                    <div className="space-y-4">
+                        <h3 className="text-sm font-semibold text-foreground">
+                            Basic Information
+                        </h3>
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="workCategory">Category *</Label>
-                            <Input id="workCategory" name="workCategory" value={formData.workCategory} onChange={handleChange} required />
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="space-y-1">
+                                <Label className="text-muted-foreground">
+                                    Work Title
+                                </Label>
+                                <p className="text-sm font-medium text-foreground">
+                                    {work.workTitle}
+                                </p>
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label className="text-muted-foreground">
+                                    Category
+                                </Label>
+                                <p className="text-sm text-foreground">
+                                    {work.workCategory}
+                                </p>
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label className="text-muted-foreground">
+                                    Work Type
+                                </Label>
+                                <p className="text-sm text-foreground">
+                                    {work.workType}
+                                </p>
+                            </div>
+
+                            {work.status && (
+                                <div className="space-y-1">
+                                    <Label className="text-muted-foreground">
+                                        Status
+                                    </Label>
+                                    <div>
+                                        <Badge variant="outline">
+                                            {work.status}
+                                        </Badge>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="workType">Type *</Label>
-                            <Input id="workType" name="workType" value={formData.workType} onChange={handleChange} required />
+                    </div>
+
+                    <Separator />
+
+                    {/* Schedule & Budget */}
+                    <div className="space-y-4">
+                        <h3 className="text-sm font-semibold text-foreground">
+                            Schedule & Budget
+                        </h3>
+
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                            {work.startDate && (
+                                <div className="space-y-1">
+                                    <Label className="text-muted-foreground">
+                                        Start Date
+                                    </Label>
+                                    <p className="text-sm text-foreground">
+                                        {new Date(
+                                            work.startDate
+                                        ).toLocaleDateString()}
+                                    </p>
+                                </div>
+                            )}
+
+                            {work.endDate && (
+                                <div className="space-y-1">
+                                    <Label className="text-muted-foreground">
+                                        End Date
+                                    </Label>
+                                    <p className="text-sm text-foreground">
+                                        {new Date(
+                                            work.endDate
+                                        ).toLocaleDateString()}
+                                    </p>
+                                </div>
+                            )}
+
+                            {work.budget !== undefined && (
+                                <div className="space-y-1">
+                                    <Label className="text-muted-foreground">
+                                        Budget
+                                    </Label>
+                                    <p className="text-sm font-semibold text-foreground">
+                                        ₹{work.budget}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="startDate">Start Date</Label>
-                            <Input id="startDate" name="startDate" type="date" value={formData.startDate || ""} onChange={handleChange} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="endDate">End Date</Label>
-                            <Input id="endDate" name="endDate" type="date" value={formData.endDate || ""} onChange={handleChange} />
-                        </div>
-                    </div>
+                    <Separator />
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="budget">Budget (₹)</Label>
-                            <Input id="budget" name="budget" type="number" value={formData.budget || ""} onChange={handleChange} min="0" step="0.01" />
-                        </div>
-                    </div>
+                    {/* Description */}
+                    {work.description && (
+                        <>
+                            <div className="space-y-2">
+                                <h3 className="text-sm font-semibold text-foreground">
+                                    Description
+                                </h3>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
-                        <Textarea id="description" name="description" value={formData.description || ""} onChange={handleChange} rows={4} className="resize-none" />
-                    </div>
+                                <p className="text-sm leading-6 text-muted-foreground">
+                                    {work.description}
+                                </p>
+                            </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="manualAddress">Address</Label>
-                        <Input id="manualAddress" name="manualAddress" value={formData.manualAddress || ""} onChange={handleChange} />
-                    </div>
+                            <Separator />
+                        </>
+                    )}
 
-                    <div className="space-y-2">
-                        <Label htmlFor="landmark">Landmark</Label>
-                        <Input id="landmark" name="landmark" value={formData.landmark || ""} onChange={handleChange} />
-                    </div>
+                    {/* Location */}
+                    {(work.manualAddress || work.landmark) && (
+                        <>
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-semibold text-foreground">
+                                    Location
+                                </h3>
+
+                                {work.manualAddress && (
+                                    <div className="flex items-start gap-2">
+                                        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+
+                                        <div className="space-y-1">
+                                            <Label className="text-muted-foreground">
+                                                Address
+                                            </Label>
+                                            <p className="text-sm text-foreground">
+                                                {work.manualAddress}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {work.landmark && (
+                                    <div className="flex items-start gap-2">
+                                        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+
+                                        <div className="space-y-1">
+                                            <Label className="text-muted-foreground">
+                                                Landmark
+                                            </Label>
+                                            <p className="text-sm text-foreground">
+                                                {work.landmark}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <Separator />
+                        </>
+                    )}
+
+                    {/* Voice Note */}
+                    {work.voiceFile?.url && (
+                        <>
+                            <div className="space-y-2">
+                                <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                                    <Mic className="h-4 w-4" />
+                                    Voice Note
+                                </h3>
+
+                                <audio
+                                    controls
+                                    src={work.voiceFile.url}
+                                    className="w-full max-w-sm dark:[color-scheme:dark]"
+                                />
+                            </div>
+
+                            <Separator />
+                        </>
+                    )}
+
+                    {/* Media */}
+                    {((work.images && work.images.length > 0) ||
+                        (work.videos && work.videos.length > 0)) && (
+                            <div className="space-y-3">
+                                <h3 className="text-sm font-semibold text-foreground">
+                                    Media
+                                </h3>
+
+                                <div className="flex flex-wrap gap-3">
+                                    {work.images?.map((img) => (
+                                        <a
+                                            key={img.publicId}
+                                            href={img.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="block h-24 w-24 overflow-hidden rounded-md border border-border transition-opacity hover:opacity-90"
+                                        >
+                                            <img
+                                                src={img.url}
+                                                alt="Work"
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </a>
+                                    ))}
+
+                                    {work.videos?.map((vid) => (
+                                        <video
+                                            key={vid.publicId}
+                                            src={vid.url}
+                                            className="h-24 w-24 rounded-md border border-border bg-black object-cover"
+                                            muted
+                                            controls
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
-                    {/* <Button onClick={handleSubmit} disabled={isSubmitting}>
-                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {isSubmitting ? "Updating..." : "Update Work"}
-                    </Button> */}
+                    <Button variant="outline" onClick={() => onClose()}>
+                        Close
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -224,12 +329,12 @@ function EditModal({ work, isOpen, onClose, onUpdated }: EditModalProps) {
 
 function WorkCard({
     work,
-    onEdit,
+    onView,
     onDelete,
     getStatusColor,
 }: {
     work: WorkItem;
-    onEdit: (work: WorkItem) => void;
+    onView: (work: WorkItem) => void;
     onDelete: (workId: string) => void;
     getStatusColor: (status?: string) => string;
 }) {
@@ -344,7 +449,7 @@ function WorkCard({
                 <Separator />
 
                 <div className="flex flex-wrap gap-2">
-                    <Button variant="outline" onClick={() => onEdit(work)}>
+                    <Button variant="outline" onClick={() => onView(work)}>
                         <Eye className="mr-2 h-4 w-4" />
                         View Work Details
                     </Button>
@@ -368,7 +473,7 @@ export default function WorkContent() {
     const [activeTab, setActiveTab] = useState<Bucket>('all');
     const [currentPage, setCurrentPage] = useState(1);
 
-    const [editingWork, setEditingWork] = useState<WorkItem | null>(null);
+    const [viewingWork, setViewingWork] = useState<WorkItem | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [deleteWorkId, setDeleteWorkId] = useState<string | null>(null);
 
@@ -399,14 +504,14 @@ export default function WorkContent() {
         }
     };
 
-    const handleEdit = (work: WorkItem) => {
-        setEditingWork(work);
+    const handleView = (work: WorkItem) => {
+        setViewingWork(work);
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setEditingWork(null);
+        setViewingWork(null);
     };
 
     // A status edit can move the work into a different tab/bucket — refetch
@@ -527,7 +632,7 @@ export default function WorkContent() {
                             <WorkCard
                                 key={work.id}
                                 work={work}
-                                onEdit={handleEdit}
+                                onView={handleView}
                                 onDelete={() => setDeleteWorkId(work.id)}
                                 getStatusColor={getStatusColor}
                             />
@@ -585,12 +690,11 @@ export default function WorkContent() {
                 </>
             )}
 
-            {editingWork && (
-                <EditModal
-                    work={editingWork}
+            {viewingWork && (
+                <ViewWorkModal
+                    work={viewingWork}
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
-                    onUpdated={handleUpdated}
                 />
             )}
 
