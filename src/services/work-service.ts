@@ -1,7 +1,7 @@
 import type { ApplyForWorkerDto } from "@/components/worker/apply-worker/worker-apply";
 import { api } from "./axios-instance/axios-instance";
 import { WORK_ENDPOINTS } from "@/constants/api-endpoints/work-endpoints";
-import type { MediaItem } from "./cloudinary-work-media-service";
+import type { MediaItem } from "./types/cloudinary.types";
 
 interface UpdateWorkDto {
     workTitle?: string;

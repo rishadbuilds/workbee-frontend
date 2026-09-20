@@ -1,6 +1,6 @@
 import { api } from "./axios-instance/axios-instance";
 import { WORK_ENDPOINTS } from "@/constants/api-endpoints/work-endpoints";
-import type { MediaItem, SignatureResponse } from "./types/cloudinary";
+import type { MediaItem, SignatureResponse } from "./types/cloudinary.types";
 
 export const CloudinaryWorkMediaService = {
   getSignature: async (): Promise<SignatureResponse> => {

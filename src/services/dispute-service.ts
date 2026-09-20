@@ -1,6 +1,6 @@
 import { api } from "./axios-instance/axios-instance";
 import { DISPUTE_ENDPOINTS } from "@/constants/api-endpoints/dispute-endpoints";
-import type { CreateDisputePayload, DisputeActionPayload } from "./types/dispute";
+import type { CreateDisputePayload, DisputeActionPayload } from "./types/dispute.types";
 
 
 export const DisputeService = {

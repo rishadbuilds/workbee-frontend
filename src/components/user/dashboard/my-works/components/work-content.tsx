@@ -245,7 +245,7 @@ function EditModal({ work, isOpen, onClose, onUpdated }: EditModalProps) {
     );
 }
 
-/*                                WORK CARD                                   */
+/* WORK CARD */
 
 function WorkCard({
     work,
