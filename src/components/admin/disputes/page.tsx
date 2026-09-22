@@ -1,11 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 
 import { DisputeService } from '@/services/dispute-service';
-import type {
-  DisputeActionType,
-  WorkerSummary,
-  UserSummary,
-} from '@/services/dispute-service';
+
+import type { DisputeActionType,WorkerSummary,UserSummary } from '@/services/types/dispute.types';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';

@@ -2,8 +2,8 @@ import type { ApplyForWorkerDto } from "@/components/worker/apply-worker/worker-
 import { api } from "./axios-instance/axios-instance";
 import { WORK_ENDPOINTS } from "@/constants/api-endpoints/work-endpoints";
 import type { MediaItem } from "./types/cloudinary.types";
-import type { MyWorksParams, WorkerAssignedWorksParams } from "./types/work-service.types";
-import type { LiveWorksParams } from "@/hooks/useLiveWorks";
+
+import type { MyWorksParams, WorkerAddress, WorkerAssignedWorksParams, LiveWorksParams, } from "./types/work-service.types";
 
 interface UpdateWorkDto {
     workTitle?: string;
@@ -156,7 +156,16 @@ export const WorkService = {
         return api.get(WORK_ENDPOINTS.ADMIN_WORK_STATS);
     },
 
-    updateWorkerProfile: (data: { name: string; phone: string; location: string; bio: string; }) => {
+    // updateWorkerProfile: (data: { name: string; phone: string; location: string; bio: string; }) => {
+    //     return api.patch(WORK_ENDPOINTS.UPDATE_WORKER_PROFILE, data);
+    // },
+    updateWorkerProfile: (data: {
+        name: string;
+        phone: string;
+        address: WorkerAddress;
+        workTypes: string[]
+        bio: string;
+    }) => {
         return api.patch(WORK_ENDPOINTS.UPDATE_WORKER_PROFILE, data);
     },
 }

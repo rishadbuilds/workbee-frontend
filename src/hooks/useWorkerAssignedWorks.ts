@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { WorkService, type WorkerAssignedWorksParams } from "@/services/work-service";
+import { WorkService } from "@/services/work-service";
 import { getErrorMessage } from "@/utils/error-helper";
+import type { WorkerAssignedWorksParams } from "@/services/types/work-service.types";
 
 export interface Work {
   id: string;

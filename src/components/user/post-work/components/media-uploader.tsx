@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { Plus, X, Loader2, ImageIcon, VideoIcon } from "lucide-react"
 import { CloudinaryWorkMediaService } from "@/services/cloudinary-work-media-service"
-import type { MediaItem } from "@/services/cloudinary-work-media-service"
+import type { MediaItem } from "@/services/types/cloudinary.types"
 import { toast } from "sonner"
 
 interface UploadSlot {

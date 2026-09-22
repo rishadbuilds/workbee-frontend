@@ -18,3 +18,11 @@ export interface LiveWorksParams {
   limit?: number;
   bucket?: 'active' | 'completed';
 }
+
+export interface WorkerAddress {
+    state: string;
+    pincode: string;
+    panchayath: string;
+    city: string;
+    place: string;
+}

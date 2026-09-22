@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { WorkService, type MyWorksParams } from "@/services/work-service";
+import { WorkService } from "@/services/work-service";
 import { getErrorMessage } from "@/utils/error-helper";
+import type { MyWorksParams } from "@/services/types/work-service.types";
 
 interface MediaItem {
   url: string;

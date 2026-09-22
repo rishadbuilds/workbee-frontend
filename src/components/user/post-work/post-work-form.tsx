@@ -55,7 +55,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
-import type { MediaItem } from "@/services/cloudinary-work-media-service"
+import type { MediaItem } from "@/services/types/cloudinary.types"
 import { MediaUploader } from "./components/media-uploader"
 import { VoiceRecorder } from "./components/voice-recorder"
 import {

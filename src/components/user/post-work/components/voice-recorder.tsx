@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect } from "react"
 import { Mic, Trash2, Loader2, Lock, Pause, Play, Send, ChevronRight } from "lucide-react"
 import { toast } from "sonner"
 import { CloudinaryWorkMediaService } from "@/services/cloudinary-work-media-service"
-import type { MediaItem } from "@/services/cloudinary-work-media-service"
+import type { MediaItem } from "@/services/types/cloudinary.types"
 
 interface VoiceRecorderProps {
   value: MediaItem | null
