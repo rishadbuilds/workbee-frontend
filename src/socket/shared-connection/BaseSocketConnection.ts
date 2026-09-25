@@ -10,6 +10,8 @@ export abstract class BaseSocketConnection {
   protected abstract getUrl(): string;
   protected abstract onSocketCreated(socket: Socket): void;
 
+  protected abstract getPath(): string;
+  
   registerAttacher(attacher: Attacher): void {
     this.attachers.push(attacher);
     if (this.socket) attacher(this.socket);
@@ -34,7 +36,18 @@ export abstract class BaseSocketConnection {
 
     this.token = token;
 
+    // this.socket = io(this.getUrl(), {
+    //   auth: { token },
+    //   transports: ['websocket', 'polling'],
+    //   reconnection: true,
+    //   reconnectionAttempts: Infinity,
+    //   reconnectionDelay: 1000,
+    //   reconnectionDelayMax: 5000,
+    //   timeout: 20000,
+    // });
+    
     this.socket = io(this.getUrl(), {
+      path: this.getPath(),
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnection: true,
