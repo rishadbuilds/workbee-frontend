@@ -1361,7 +1361,7 @@ export default function DisputeResolution() {
           !open && setConfirmAction(null)
         }
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>
               Confirm action
