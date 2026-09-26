@@ -685,9 +685,7 @@ export function PostWorkForm({
           }
         )
 
-        navigate(
-          AppRoutes.USER.DASHBOARD.MY_WORKS
-        )
+        navigate(AppRoutes.USER.DASHBOARD.MY_WORKS)
       }
     } catch (error) {
       console.error(

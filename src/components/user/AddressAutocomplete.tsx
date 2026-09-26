@@ -62,8 +62,10 @@ const AddressAutocomplete = ({
           ) => ({
             id: index.toString(),
             text: place.formatted,
-            lat: place.geometry.lat.toString(),
-            lng: place.geometry.lng.toString(),
+            // lat: place.geometry.lat.toString(),
+            // lng: place.geometry.lng.toString(),
+            lat: place.geometry.lat,
+lng: place.geometry.lng,
           })
         );
 
@@ -111,10 +113,26 @@ const AddressAutocomplete = ({
           console.error("Error fetching location:", error);
         }
       },
+      // (error) => {
+      //   console.error("Geolocation error:", error);
+      //   toast("Unable to retrieve location.");
+      // }
       (error) => {
-        console.error("Geolocation error:", error);
-        toast("Unable to retrieve location.");
-      }
+  console.error("Geolocation error:", {
+    code: error.code,
+    message: error.message,
+  });
+
+  if (error.code === error.PERMISSION_DENIED) {
+    toast("Location permission was denied. Please allow location access.");
+  } else if (error.code === error.POSITION_UNAVAILABLE) {
+    toast("Your location is currently unavailable.");
+  } else if (error.code === error.TIMEOUT) {
+    toast("Location request timed out.");
+  } else {
+    toast("Unable to retrieve location.");
+  }
+}
     );
   };
 
