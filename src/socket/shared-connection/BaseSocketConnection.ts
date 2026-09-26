@@ -35,16 +35,6 @@ export abstract class BaseSocketConnection {
     }
 
     this.token = token;
-
-    // this.socket = io(this.getUrl(), {
-    //   auth: { token },
-    //   transports: ['websocket', 'polling'],
-    //   reconnection: true,
-    //   reconnectionAttempts: Infinity,
-    //   reconnectionDelay: 1000,
-    //   reconnectionDelayMax: 5000,
-    //   timeout: 20000,
-    // });
     
     this.socket = io(this.getUrl(), {
       path: this.getPath(),

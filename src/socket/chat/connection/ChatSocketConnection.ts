@@ -4,9 +4,6 @@ import { BaseSocketConnection } from '@/socket/shared-connection/BaseSocketConne
 export class ChatSocketConnection extends BaseSocketConnection {
   private joinedChatIds: Set<string> = new Set();
 
-  // protected getUrl(): string {
-  //   return import.meta.env.VITE_COMMUNICATION_URL;
-  // }
   protected getUrl(): string {
     return import.meta.env.VITE_COMMUNICATION_URL;
   }
