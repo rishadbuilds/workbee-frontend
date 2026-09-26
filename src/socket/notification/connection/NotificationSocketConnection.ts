@@ -8,7 +8,7 @@ export class NotificationSocketConnection extends BaseSocketConnection {
   }
 
   protected getPath(): string {
-    return '/socket.io';
+    return '/notification/socket.io';
   }
 
   protected onSocketCreated(_socket: Socket): void { } // no connection-time-only behavior needed for notifications
