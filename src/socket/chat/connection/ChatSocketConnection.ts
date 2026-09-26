@@ -9,7 +9,7 @@ export class ChatSocketConnection extends BaseSocketConnection {
   }
 
   protected getPath(): string {
-    return '/communication/socket.io';
+    return '/socket.io';
   }
 
   protected onSocketCreated(socket: Socket): void {
