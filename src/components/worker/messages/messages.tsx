@@ -8,7 +8,7 @@ import { MediaUploadButton } from '@/components/chat/MediaUploadButton';
 import type { UploadedMedia } from '@/components/chat/MediaUploadButton';
 import { MediaMessage } from '@/components/chat/MediaMessage';
 import { SystemMessage } from '@/components/chat/SystemMessage';
-import { parseSystemMessage, isBidCardActionable } from '@/components/chat/system-message-utils';
+import { parseSystemMessage, isBidCardActionable,getMessagePreview } from '@/components/chat/system-message-utils';
 import AskBetterPriceModal from './modals/ask-better-price-modal';
 import { BidService } from '@/services/bid-service';
 import UserProfileModal from '@/components/chat/UserProfileModal';
@@ -157,7 +157,8 @@ export default function WorkerMessages() {
           if (idx === -1) return prev;
           const updatedChat: Chat = {
             ...prev[idx],
-            lastMessage: message.content,
+            // lastMessage: message.content,
+            lastMessage: getMessagePreview(message),
             lastMessageAt: message.createdAt,
           } as Chat;
           const next = prev.filter(c => c.id !== incomingChatId);

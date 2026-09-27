@@ -4,12 +4,12 @@ import { socketService } from '@/services/chat-socket-service';
 import { ChatService } from '@/services/chat-service';
 import { WorkService } from '@/services/work-service';
 import { AuthHelper } from '@/utils/auth-helper';
-import { ArrowLeft, MessageCircle, MessagesSquare, Search, Send, User } from 'lucide-react';
+import { ArrowLeft, MessagesSquare, Search, Send, User } from 'lucide-react';
 import { MediaUploadButton } from '@/components/chat/MediaUploadButton';
 import type { UploadedMedia } from '@/components/chat/MediaUploadButton';
 import { MediaMessage } from '@/components/chat/MediaMessage';
 import { SystemMessage } from '@/components/chat/SystemMessage';
-import { parseSystemMessage, isBidCardActionable } from '@/components/chat/system-message-utils';
+import { parseSystemMessage, isBidCardActionable ,getMessagePreview} from '@/components/chat/system-message-utils';
 import { PaymentService } from "@/services/payment-service"
 import { BidService } from '@/services/bid-service';
 import CounterOfferModal from './modals/counter-offer-modal';
@@ -20,7 +20,6 @@ import { ReviewService } from '@/services/review-service';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { formatChatListTime } from '@/utils/chat-time-helper';
-
 interface Message {
   id: string;
   chatId: string;
@@ -378,7 +377,8 @@ export default function ClientMessages() {
           if (idx === -1) return prev;
           const updatedChat: Chat = {
             ...prev[idx],
-            lastMessage: message.content,
+            // lastMessage: message.content,
+            lastMessage: getMessagePreview(message),
             lastMessageAt: message.createdAt,
           };
           const next = prev.filter(c => c.id !== incomingChatId);

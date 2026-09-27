@@ -34,3 +34,44 @@ export function isBidCardActionable(messages: { id: string; content: string; typ
     }
     return true;
 }
+
+export function getMessagePreview(message: { type: string; content: string }): string {
+  if (message.type === 'image') return '📷 Image';
+  if (message.type === 'video') return '🎥 Video';
+
+  if (message.type === 'system') {
+    const parsed = parseSystemMessage(message.content);
+    if (!parsed) return 'New update';
+
+    switch (parsed.type) {
+      case 'WORK_CONFIRM_REQUEST':
+        return 'Confirmation requested';
+      case 'WORK_CONFIRM_ACCEPTED':
+        return 'Deal confirmed';
+      case 'WORK_CONFIRM_REJECTED':
+        return 'Deal rejected';
+      case 'WORK_PROGRESS_UPDATE': {
+        const label =
+          parsed.progress === 'started' ? 'Work started' :
+          parsed.progress === 'ongoing' ? 'Work in progress' :
+          parsed.progress === 'completed' ? 'Work completed' :
+          `Progress: ${parsed.progress}`;
+        return label;
+      }
+      case 'WORK_BID_OFFER':
+        return `Offered ₹${parsed.amount}`;
+      case 'WORK_BID_COUNTER':
+        return `Countered ₹${parsed.amount}`;
+      case 'WORK_BID_ACCEPTED':
+        return `Offer accepted — ₹${parsed.amount}`;
+      case 'WORK_BID_REJECTED':
+        return 'Offer rejected';
+      case 'WORK_BID_PAID':
+        return `Payment of ₹${parsed.amount} completed`;
+      default:
+        return 'New update';
+    }
+  }
+
+  return message.content;
+}
