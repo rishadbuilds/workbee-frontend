@@ -1,14 +1,20 @@
 import { Socket } from 'socket.io-client';
 import { ChatSocketConnection } from '../connection/ChatSocketConnection';
 
+export interface UserTypingEvent {
+  chatId: string;
+  userId: string;
+  isTyping: boolean;
+}
+
 export class TypingSocketModule {
-  private typingCallbacks: Set<(data: { userId: string; isTyping: boolean }) => void> = new Set();
+  private typingCallbacks: Set<(data: UserTypingEvent) => void> = new Set();
 
   private connection: ChatSocketConnection;
-    constructor(connection: ChatSocketConnection) {
-        this.connection = connection;
-        this.connection.registerAttacher((socket) => this.reattach(socket))
-    }
+  constructor(connection: ChatSocketConnection) {
+    this.connection = connection;
+    this.connection.registerAttacher((socket) => this.reattach(socket));
+  }
 
   private reattach(socket: Socket): void {
     this.typingCallbacks.forEach(cb => {
@@ -23,7 +29,7 @@ export class TypingSocketModule {
     socket.emit('typing', { chatId, isTyping });
   }
 
-  onUserTyping(callback: (data: { userId: string; isTyping: boolean }) => void): void {
+  onUserTyping(callback: (data: UserTypingEvent) => void): void {
     this.typingCallbacks.add(callback);
     const socket = this.connection.getSocket();
     if (socket) {
@@ -32,7 +38,7 @@ export class TypingSocketModule {
     }
   }
 
-  offUserTyping(callback?: (data: { userId: string; isTyping: boolean }) => void): void {
+  offUserTyping(callback?: (data: UserTypingEvent) => void): void {
     const socket = this.connection.getSocket();
     if (callback) {
       this.typingCallbacks.delete(callback);

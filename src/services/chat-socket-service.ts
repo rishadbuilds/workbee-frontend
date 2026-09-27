@@ -1,3 +1,70 @@
+// import { ChatSocketConnection } from '@/socket/chat/connection/ChatSocketConnection';
+// import { ChatSocketModule } from '@/socket/chat/modules/ChatSocketModule';
+// import type { IncomingSocketMessage } from '@/socket/chat/types/SocketType';
+// import type { SendMessageData } from '@/socket/chat/types/SocketType';
+// import { WorkSocketModule } from '@/socket/chat/modules/WorkSocketModule';
+// import { BidSocketModule } from '@/socket/chat/modules/BidSocketModule';
+// import { TypingSocketModule } from '@/socket/chat/modules/TypingSocketModule';
+// import { ErrorSocketModule } from '@/socket/chat/modules/ErrorSocketModule';
+
+
+// export type { IncomingSocketMessage };
+
+// class SocketService {
+//   private static instance: SocketService;
+
+//   // create modules
+//   private connection = new ChatSocketConnection();
+//   private chat = new ChatSocketModule(this.connection);
+//   private work = new WorkSocketModule(this.connection);
+//   private bid = new BidSocketModule(this.connection);
+//   private typingModule = new TypingSocketModule(this.connection);
+//   private errors = new ErrorSocketModule(this.connection);
+
+//   private constructor() {}
+
+//   static getInstance(): SocketService {
+//     if (!SocketService.instance) SocketService.instance = new SocketService();
+//     return SocketService.instance;
+//   }
+
+//   connect(token: string): void { this.connection.connect(token); }
+//   disconnect(): void {
+//     this.connection.disconnect();
+//     this.chat.clear();
+//     this.work.clear();
+//     this.typingModule.clear();
+//     this.errors.clear();
+//   }
+//   isConnected(): boolean { return this.connection.isConnected(); }
+
+//   joinChat = (chatId: string) => this.chat.joinChat(chatId);
+//   leaveChat = (chatId: string) => this.chat.leaveChat(chatId);
+
+//   sendMessage = (data: SendMessageData) => this.chat.sendMessage(data);
+//   onNewMessage = (cb: Parameters<ChatSocketModule['onNewMessage']>[0]) => this.chat.onNewMessage(cb);
+//   offNewMessage = (cb?: Parameters<ChatSocketModule['offNewMessage']>[0]) => this.chat.offNewMessage(cb);
+
+//   askForConfirm = (data: Parameters<WorkSocketModule['askForConfirm']>[0]) => this.work.askForConfirm(data);
+//   confirmResponse = (data: Parameters<WorkSocketModule['confirmResponse']>[0]) => this.work.confirmResponse(data);
+//   updateWorkProgress = (data: Parameters<WorkSocketModule['updateWorkProgress']>[0]) => this.work.updateWorkProgress(data);
+//   onWorkProgressChanged = (cb: Parameters<WorkSocketModule['onWorkProgressChanged']>[0]) => this.work.onWorkProgressChanged(cb);
+//   offWorkProgressChanged = (cb?: Parameters<WorkSocketModule['offWorkProgressChanged']>[0]) => this.work.offWorkProgressChanged(cb);
+
+//   sendBidOffer = (data: Parameters<BidSocketModule['sendBidOffer']>[0]) => this.bid.sendBidOffer(data);
+//   respondToBid = (data: Parameters<BidSocketModule['respondToBid']>[0]) => this.bid.respondToBid(data);
+//   notifyBidPaymentCompleted = (data: Parameters<BidSocketModule['notifyBidPaymentCompleted']>[0]) => this.bid.notifyBidPaymentCompleted(data);
+
+//   sendTyping = (chatId: string, isTyping: boolean) => this.typingModule.sendTyping(chatId, isTyping);
+//   onUserTyping = (cb: Parameters<TypingSocketModule['onUserTyping']>[0]) => this.typingModule.onUserTyping(cb);
+//   offUserTyping = (cb?: Parameters<TypingSocketModule['offUserTyping']>[0]) => this.typingModule.offUserTyping(cb);
+
+//   onSocketError = (cb: Parameters<ErrorSocketModule['onSocketError']>[0]) => this.errors.onSocketError(cb);
+//   offSocketError = (cb?: Parameters<ErrorSocketModule['offSocketError']>[0]) => this.errors.offSocketError(cb);
+// }
+
+// export const socketService = SocketService.getInstance();
+
 import { ChatSocketConnection } from '@/socket/chat/connection/ChatSocketConnection';
 import { ChatSocketModule } from '@/socket/chat/modules/ChatSocketModule';
 import type { IncomingSocketMessage } from '@/socket/chat/types/SocketType';
@@ -5,8 +72,8 @@ import type { SendMessageData } from '@/socket/chat/types/SocketType';
 import { WorkSocketModule } from '@/socket/chat/modules/WorkSocketModule';
 import { BidSocketModule } from '@/socket/chat/modules/BidSocketModule';
 import { TypingSocketModule } from '@/socket/chat/modules/TypingSocketModule';
+import { PresenceSocketModule } from '@/socket/chat/modules/PresenceSocketModule';
 import { ErrorSocketModule } from '@/socket/chat/modules/ErrorSocketModule';
-
 
 export type { IncomingSocketMessage };
 
@@ -19,6 +86,7 @@ class SocketService {
   private work = new WorkSocketModule(this.connection);
   private bid = new BidSocketModule(this.connection);
   private typingModule = new TypingSocketModule(this.connection);
+  private presence = new PresenceSocketModule(this.connection);
   private errors = new ErrorSocketModule(this.connection);
 
   private constructor() {}
@@ -34,6 +102,7 @@ class SocketService {
     this.chat.clear();
     this.work.clear();
     this.typingModule.clear();
+    this.presence.clear();
     this.errors.clear();
   }
   isConnected(): boolean { return this.connection.isConnected(); }
@@ -58,6 +127,13 @@ class SocketService {
   sendTyping = (chatId: string, isTyping: boolean) => this.typingModule.sendTyping(chatId, isTyping);
   onUserTyping = (cb: Parameters<TypingSocketModule['onUserTyping']>[0]) => this.typingModule.onUserTyping(cb);
   offUserTyping = (cb?: Parameters<TypingSocketModule['offUserTyping']>[0]) => this.typingModule.offUserTyping(cb);
+
+  // Presence (online/offline)
+  requestOnlineStatus = (userIds: string[]) => this.presence.requestBulkStatus(userIds);
+  onUserStatusChanged = (cb: Parameters<PresenceSocketModule['onStatusChanged']>[0]) => this.presence.onStatusChanged(cb);
+  offUserStatusChanged = (cb?: Parameters<PresenceSocketModule['offStatusChanged']>[0]) => this.presence.offStatusChanged(cb);
+  onBulkOnlineStatus = (cb: Parameters<PresenceSocketModule['onBulkStatus']>[0]) => this.presence.onBulkStatus(cb);
+  offBulkOnlineStatus = (cb?: Parameters<PresenceSocketModule['offBulkStatus']>[0]) => this.presence.offBulkStatus(cb);
 
   onSocketError = (cb: Parameters<ErrorSocketModule['onSocketError']>[0]) => this.errors.onSocketError(cb);
   offSocketError = (cb?: Parameters<ErrorSocketModule['offSocketError']>[0]) => this.errors.offSocketError(cb);

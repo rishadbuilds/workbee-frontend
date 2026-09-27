@@ -18,6 +18,8 @@ import WorkerReviewModal from '@/components/chat/WorkerReviewModal';
 import WorkerProfileModal from '@/components/chat/WorkerProfileModal';
 import { ReviewService } from '@/services/review-service';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { formatChatListTime } from '@/utils/chat-time-helper';
 
 interface Message {
   id: string;
@@ -106,6 +108,9 @@ export default function ClientMessages() {
   const [pendingMedia, setPendingMedia] = useState<UploadedMedia | null>(null);
   const [chatSearch, setChatSearch] = useState('');
 
+  // FEATURE: online/offline presence, keyed by userId
+  const [onlineStatus, setOnlineStatus] = useState<Record<string, boolean>>({});
+
   const [counterOfferModalOpen, setCounterOfferModalOpen] = useState(false);
   const [activeBidPayload, setActiveBidPayload] = useState<BidPayload | null>(null);
 
@@ -134,6 +139,11 @@ export default function ClientMessages() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const selectedChatRef = useRef<Chat | null>(null);
   const isInitialLoadRef = useRef(false);
+
+  // FEATURE (typing fix): sender-side "stop typing" auto-timer, and
+  // receiver-side safety auto-clear timer in case a "stopped" event is lost.
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typingClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Opens Razorpay checkout for an already-created order, verifies on success,
   // and reports failures back to the backend so they show up in the wallet.
@@ -332,6 +342,14 @@ export default function ClientMessages() {
     selectedChatRef.current = selectedChat;
   }, [selectedChat]);
 
+  // Clean up any pending timers when the component unmounts.
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      if (typingClearRef.current) clearTimeout(typingClearRef.current);
+    };
+  }, []);
+
   useEffect(() => {
     if (token && !socketService.isConnected()) {
       socketService.connect(token);
@@ -339,30 +357,71 @@ export default function ClientMessages() {
 
     const handleNewMessage = (message: Message) => {
       const incomingChatId = message.chatId;
+
       if (incomingChatId === selectedChatRef.current?.id) {
         setMessages(prev => {
           if (prev.some(m => m.id === message.id)) return prev;
           return [...prev, message];
         });
-        return;
-      }
-      if (message.senderId !== userId && incomingChatId) {
+      } else if (message.senderId !== userId && incomingChatId) {
         setUnreadCounts(prev => ({
           ...prev,
           [incomingChatId]: (prev[incomingChatId] || 0) + 1,
         }));
-        setChats(prev =>
-          prev.map(c => c.id === incomingChatId ? { ...c, lastMessage: message.content } : c)
-        );
+      }
+
+      // FEATURE: live re-sort — bump whichever chat this message belongs to
+      // (sent or received) to the top of the sidebar, with a fresh preview.
+      if (incomingChatId) {
+        setChats(prev => {
+          const idx = prev.findIndex(c => c.id === incomingChatId);
+          if (idx === -1) return prev;
+          const updatedChat: Chat = {
+            ...prev[idx],
+            lastMessage: message.content,
+            lastMessageAt: message.createdAt,
+          };
+          const next = prev.filter(c => c.id !== incomingChatId);
+          next.unshift(updatedChat);
+          return next;
+        });
       }
     };
 
-    const handleUserTyping = ({ userId: typingUserId, isTyping }: { userId: string; isTyping: boolean }) => {
-      if (typingUserId !== userId) setIsTyping(isTyping);
+    // FEATURE (typing fix): only react to typing events for the chat that's
+    // currently open, and auto-clear the indicator as a safety net in case
+    // a "stopped typing" event never arrives.
+    const handleUserTyping = ({ userId: typingUserId, isTyping, chatId }: { userId: string; isTyping: boolean; chatId: string }) => {
+      if (typingUserId === userId) return;
+      if (chatId !== selectedChatRef.current?.id) return;
+
+      setIsTyping(isTyping);
+
+      if (typingClearRef.current) {
+        clearTimeout(typingClearRef.current);
+        typingClearRef.current = null;
+      }
+      if (isTyping) {
+        typingClearRef.current = setTimeout(() => setIsTyping(false), 3000);
+      }
+    };
+
+    // FEATURE: presence
+    const handleUserStatusChanged = ({ userId: uid, status }: { userId: string; status: 'online' | 'offline' }) => {
+      setOnlineStatus(prev => ({ ...prev, [uid]: status === 'online' }));
+    };
+    const handleBulkStatus = (statuses: { userId: string; status: 'online' | 'offline' }[]) => {
+      setOnlineStatus(prev => {
+        const next = { ...prev };
+        statuses.forEach(s => { next[s.userId] = s.status === 'online'; });
+        return next;
+      });
     };
 
     socketService.onNewMessage(handleNewMessage);
     socketService.onUserTyping(handleUserTyping);
+    socketService.onUserStatusChanged(handleUserStatusChanged);
+    socketService.onBulkOnlineStatus(handleBulkStatus);
 
     const init = async () => {
       await loadChats();
@@ -373,11 +432,26 @@ export default function ClientMessages() {
     return () => {
       socketService.offNewMessage(handleNewMessage);
       socketService.offUserTyping(handleUserTyping);
+      socketService.offUserStatusChanged(handleUserStatusChanged);
+      socketService.offBulkOnlineStatus(handleBulkStatus);
     };
   }, [token, navChatId, userId]);
 
   useEffect(() => {
     if (!selectedChat) return;
+
+    // FEATURE (typing fix): switching chats must not carry over a stale
+    // "Typing..." indicator from whatever chat was open before.
+    setIsTyping(false);
+    if (typingClearRef.current) {
+      clearTimeout(typingClearRef.current);
+      typingClearRef.current = null;
+    }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+
     loadMessages(selectedChat.id);
     socketService.joinChat(selectedChat.id);
     setUnreadCounts(prev => ({ ...prev, [selectedChat.id]: 0 }));
@@ -429,6 +503,10 @@ export default function ClientMessages() {
       });
 
       setUnreadCounts(counts);
+
+      // FEATURE: ask the server who's online among all workers we chat with.
+      const workerIds = fetchedChats.map(c => c.participants.workerId);
+      socketService.requestOnlineStatus(workerIds);
 
       // Load each worker's profile image
       const loadProfileImages = async () => {
@@ -502,6 +580,14 @@ export default function ClientMessages() {
     setNewMessage('');
   };
 
+  const stopTyping = (chatId: string) => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    socketService.sendTyping(chatId, false);
+  };
+
   const handleSendMessage = async () => {
     if (!selectedChat) return;
     setSendError(null);
@@ -516,7 +602,7 @@ export default function ClientMessages() {
           mediaPublicId: pendingMedia.publicId,
         });
         setPendingMedia(null);
-        socketService.sendTyping(selectedChat.id, false);
+        stopTyping(selectedChat.id);
         return;
       }
       if (!newMessage.trim()) return;
@@ -527,7 +613,7 @@ export default function ClientMessages() {
         recipientId: getRecipientId(selectedChat),
       });
       setNewMessage('');
-      socketService.sendTyping(selectedChat.id, false);
+      stopTyping(selectedChat.id);
     } catch {
       setSendError('Failed to send. Tap retry or check your connection.');
     }
@@ -663,9 +749,28 @@ export default function ClientMessages() {
     }
   };
 
+  // FEATURE (typing fix): emit typing state immediately, and schedule an
+  // automatic "stopped typing" emit after 2s of inactivity — even if the
+  // user never clears the input. This is what was actually broken before:
+  // the indicator only ever cleared when the input was emptied or the
+  // message was sent, so it got stuck if someone just paused.
   const handleTyping = (value: string) => {
     setNewMessage(value);
-    if (selectedChat) socketService.sendTyping(selectedChat.id, !!value.trim());
+    if (!selectedChat) return;
+
+    const chatId = selectedChat.id;
+    socketService.sendTyping(chatId, !!value.trim());
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+
+    if (value.trim()) {
+      typingTimeoutRef.current = setTimeout(() => {
+        socketService.sendTyping(chatId, false);
+      }, 2000);
+    }
   };
 
   const getOtherParticipant = (chat: Chat) =>
@@ -694,6 +799,7 @@ export default function ClientMessages() {
     );
   });
 
+  const selectedIsOnline = selectedChat ? !!onlineStatus[selectedChat.participants.workerId] : false;
 
   return (
     <div className="flex w-full h-[calc(100vh-250px)] bg-background">
@@ -766,30 +872,40 @@ export default function ClientMessages() {
                     )}
 
                     <div className="min-w-0 flex-1">
-                      <h3
-                        className={`truncate ${unread > 0
-                          ? 'font-semibold text-foreground'
-                          : 'font-medium text-foreground'
-                          }`}
-                      >
-                        {otherUser?.name || 'Unknown User'}
-                      </h3>
+                      {/* FEATURE: last message time, top-right, WhatsApp-style */}
+                      <div className="flex items-center justify-between gap-2">
+                        <h3
+                          className={`truncate ${unread > 0
+                            ? 'font-semibold text-foreground'
+                            : 'font-medium text-foreground'
+                            }`}
+                        >
+                          {otherUser?.name || 'Unknown User'}
+                        </h3>
+                        {chat.lastMessageAt && (
+                          <span className="shrink-0 text-[11px] text-muted-foreground">
+                            {formatChatListTime(chat.lastMessageAt)}
+                          </span>
+                        )}
+                      </div>
 
-                      <p
-                        className={`truncate text-sm ${unread > 0
-                          ? 'font-medium text-foreground/80'
-                          : 'text-muted-foreground'
-                          }`}
-                      >
-                        {chat.lastMessage || 'No messages yet'}
-                      </p>
+                      <div className="flex items-center justify-between gap-2">
+                        <p
+                          className={`truncate text-sm ${unread > 0
+                            ? 'font-medium text-foreground/80'
+                            : 'text-muted-foreground'
+                            }`}
+                        >
+                          {chat.lastMessage || 'No messages yet'}
+                        </p>
+
+                        {unread > 0 && (
+                          <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-foreground px-1.5 text-[11px] font-bold text-background">
+                            {unread > 99 ? '99+' : unread}
+                          </span>
+                        )}
+                      </div>
                     </div>
-
-                    {unread > 0 && (
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-foreground px-1.5 text-[11px] font-bold text-background">
-                        {unread > 99 ? '99+' : unread}
-                      </span>
-                    )}
                   </div>
                 </div>
               );
@@ -835,9 +951,22 @@ export default function ClientMessages() {
                     )}
 
                     <div>
-                      <h3 className="font-semibold text-foreground">
-                        {otherUser?.name || userName || 'Unknown User'}
-                      </h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-foreground">
+                          {otherUser?.name || userName || 'Unknown User'}
+                        </h3>
+
+                        {/* FEATURE: online/offline badge */}
+
+                        <Badge variant="secondary" className="ml-5 gap-1.5 border border-gray-700 text-[9px]">
+                          <span
+                            className={`h-2 w-2 rounded-full ${selectedIsOnline ? 'bg-green-700' : 'bg-muted-foreground'
+                              }`}
+                          />
+                          {selectedIsOnline ? 'Online' : 'Offline'}
+                        </Badge>
+
+                      </div>
 
                       {workTitle && (
                         <p className="text-sm text-muted-foreground">
