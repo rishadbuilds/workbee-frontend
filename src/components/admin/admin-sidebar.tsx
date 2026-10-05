@@ -19,6 +19,7 @@ import {
   MessageSquare,
   ShieldAlert,
   CreditCard,
+  CalendarClock,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -43,16 +44,7 @@ const items = [
     route: "/admin/dashboard/new-appliers",
     icon: UserPlus,
   },
-  // {
-  //   title: "Work Management",
-  //   route: "/admin/dashboard/work",
-  //   icon: Briefcase, 
-  // },
-  // {
-  //   title: "Customer Feedbacks",
-  //   route: "/admin/dashboard/feedbacks",
-  //   icon: MessageSquare, 
-  // },
+
   {
     title: "Disputes",
     route: "/admin/dashboard/dispute-resolution",
@@ -69,9 +61,9 @@ const items = [
     icon: CreditCard, 
   },
   {
-    title: "Messages",
-    route: "/admin/dashboard/feedbacks",
-    icon: MessageSquare, 
+    title: "Bookings",
+    route: "/admin/dashboard/all-bookings",
+    icon: CalendarClock, 
   },
 ];
 
