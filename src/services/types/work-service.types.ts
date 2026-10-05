@@ -26,3 +26,11 @@ export interface WorkerAddress {
     city: string;
     place: string;
 }
+
+export interface AdminBookingsParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+  fromDate?: string;
+  toDate?: string;
+}

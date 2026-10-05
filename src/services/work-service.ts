@@ -3,7 +3,7 @@ import { api } from "./axios-instance/axios-instance";
 import { WORK_ENDPOINTS } from "@/constants/api-endpoints/work-endpoints";
 import type { MediaItem } from "./types/cloudinary.types";
 
-import type { MyWorksParams, WorkerAddress, WorkerAssignedWorksParams, LiveWorksParams, } from "./types/work-service.types";
+import type { MyWorksParams, WorkerAddress, WorkerAssignedWorksParams, LiveWorksParams, AdminBookingsParams, } from "./types/work-service.types";
 
 interface UpdateWorkDto {
     workTitle?: string;
@@ -154,6 +154,10 @@ export const WorkService = {
 
     getAdminWorkStats: () => {
         return api.get(WORK_ENDPOINTS.ADMIN_WORK_STATS);
+    },
+
+    getAdminBookings: (params?: AdminBookingsParams) => {
+        return api.get(WORK_ENDPOINTS.ADMIN_BOOKINGS, { params });
     },
 
     // updateWorkerProfile: (data: { name: string; phone: string; location: string; bio: string; }) => {
