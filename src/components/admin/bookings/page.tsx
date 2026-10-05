@@ -7,10 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Dialog, DialogClose, DialogContent, DialogDescription,
-  DialogFooter, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,40 +21,10 @@ import {
   PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
 
-interface MediaItem {
-  url: string;
-  publicId: string;
-}
-
-interface Booking {
-  id: string;
-  userId: string;
-  workerId?: string;
-  workTitle: string;
-  workCategory: string;
-  workType: "oneDay" | "multipleDay";
-  date?: string;
-  startDate?: string;
-  endDate?: string;
-  time: string;
-  duration?: string;
-  budget?: string;
-  description: string;
-  contactNumber: string;
-  manualAddress?: string;
-  landmark?: string;
-  currentLocation?: string;
-  petrolAllowance?: string;
-  extraRequirements?: string;
-  anythingElse?: string;
-  images: MediaItem[];
-  videos: MediaItem[];
-  voiceFile?: MediaItem | null;
-  status: "pending" | "assigned" | "in-progress" | "completed" | "cancelled";
-  progress?: "started" | "ongoing" | "completed" | null;
-  createdAt: string;
-  updatedAt?: string;
-}
+import { BookingsWorkDetailsModal } from "./modals/BookingWorkDetailModal";
+import {
+  STATUS_STYLES, fmt, formatWorkDate, label, toISODate, type Booking,
+} from "./types/bookings-shared";
 
 interface PaginationState {
   page: number;
@@ -78,45 +44,6 @@ const STATUS_OPTIONS = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-const STATUS_STYLES: Record<Booking["status"], string> = {
-  pending: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  assigned: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  "in-progress": "bg-violet-500/15 text-violet-600 dark:text-violet-400 border-violet-500/20",
-  completed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-  cancelled: "bg-destructive/15 text-destructive border-destructive/20",
-};
-
-const PROGRESS_STYLES: Record<string, string> = {
-  started: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/20",
-  ongoing: "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/20",
-  completed: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-};
-
-/* ---------- helpers ---------- */
-
-// Local-time YYYY-MM-DD (toISOString would shift the day in IST)
-const toISODate = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
-const fmt = (d: Date) =>
-  d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
-
-const formatDate = (d?: string) => (d ? fmt(new Date(d)) : "—");
-
-const formatDateTime = (d?: string) =>
-  d
-    ? new Date(d).toLocaleString("en-IN", {
-        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
-      })
-    : "—";
-
-const formatWorkDate = (b: Booking) =>
-  b.workType === "multipleDay"
-    ? `${formatDate(b.startDate)} – ${formatDate(b.endDate)}`
-    : formatDate(b.date);
-
-const label = (s: string) => s.replace(/-/g, " ").replace(/^\w/, (c) => c.toUpperCase());
-
 const rangeLabel = (r?: DateRange) => {
   if (!r?.from) return "Pick a date range";
   if (!r.to || toISODate(r.from) === toISODate(r.to)) return fmt(r.from);
@@ -135,122 +62,6 @@ const getPageNumbers = (current: number, total: number): (number | "ellipsis")[]
   pages.push(total);
   return pages;
 };
-
-function Detail({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-1">
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-      <div className="text-sm break-words">{children || "—"}</div>
-    </div>
-  );
-}
-
-/* ---------- details modal ---------- */
-
-function BookingDetailsDialog({
-  booking, onClose,
-}: { booking: Booking | null; onClose: () => void }) {
-  return (
-    <Dialog open={!!booking} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
-        {booking && (
-          <>
-            <DialogHeader>
-              <DialogTitle>{booking.workTitle}</DialogTitle>
-              <DialogDescription>{booking.workCategory}</DialogDescription>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <Badge variant="outline" className={STATUS_STYLES[booking.status]}>
-                  {label(booking.status)}
-                </Badge>
-                {booking.progress && (
-                  <Badge variant="outline" className={PROGRESS_STYLES[booking.progress]}>
-                    Progress: {label(booking.progress)}
-                  </Badge>
-                )}
-              </div>
-            </DialogHeader>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Detail label="Work type">
-                {booking.workType === "multipleDay" ? "Multiple days" : "One day"}
-              </Detail>
-              <Detail label="Date">{formatWorkDate(booking)}</Detail>
-              <Detail label="Time">{booking.time}</Detail>
-              <Detail label="Duration">{booking.duration}</Detail>
-              <Detail label="Budget">
-                {booking.budget ? `₹${Number(booking.budget).toLocaleString("en-IN")}` : ""}
-              </Detail>
-              <Detail label="Petrol allowance">{booking.petrolAllowance}</Detail>
-              <Detail label="Contact number">{booking.contactNumber}</Detail>
-              <Detail label="Current location">{booking.currentLocation}</Detail>
-              <div className="sm:col-span-2">
-                <Detail label="Address">{booking.manualAddress}</Detail>
-              </div>
-              <Detail label="Landmark">{booking.landmark}</Detail>
-              <Detail label="Posted on">{formatDateTime(booking.createdAt)}</Detail>
-              <div className="sm:col-span-2">
-                <Detail label="Description">{booking.description}</Detail>
-              </div>
-              <div className="sm:col-span-2">
-                <Detail label="Extra requirements">{booking.extraRequirements}</Detail>
-              </div>
-              <div className="sm:col-span-2">
-                <Detail label="Anything else">{booking.anythingElse}</Detail>
-              </div>
-              <Detail label="Client ID"><span className="font-mono text-xs">{booking.userId}</span></Detail>
-              <Detail label="Worker ID">
-                {booking.workerId && <span className="font-mono text-xs">{booking.workerId}</span>}
-              </Detail>
-              <Detail label="Last updated">{formatDateTime(booking.updatedAt)}</Detail>
-            </div>
-
-            {booking.images.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Images</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {booking.images.map((img) => (
-                    <a key={img.publicId} href={img.url} target="_blank" rel="noreferrer">
-                      <img
-                        src={img.url} alt="Work"
-                        className="aspect-square w-full rounded-md border object-cover"
-                      />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {booking.videos.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Videos</p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {booking.videos.map((v) => (
-                    <video key={v.publicId} src={v.url} controls className="w-full rounded-md border" />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {booking.voiceFile && (
-              <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Voice note</p>
-                <audio src={booking.voiceFile.url} controls className="w-full" />
-              </div>
-            )}
-
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Close</Button>
-              </DialogClose>
-            </DialogFooter>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-/* ---------- page ---------- */
 
 export default function AllBookings() {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -335,10 +146,7 @@ export default function AllBookings() {
               <Label>Work date</Label>
               <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-[270px] justify-start font-normal"
-                  >
+                  <Button variant="outline" className="w-[270px] justify-start font-normal">
                     <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
                     <span className={range?.from ? "" : "text-muted-foreground"}>
                       {rangeLabel(range)}
@@ -485,7 +293,7 @@ export default function AllBookings() {
         </CardContent>
       </Card>
 
-      <BookingDetailsDialog booking={selected} onClose={() => setSelected(null)} />
+      <BookingsWorkDetailsModal booking={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }
