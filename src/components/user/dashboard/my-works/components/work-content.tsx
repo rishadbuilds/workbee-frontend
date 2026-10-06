@@ -2,7 +2,6 @@ import { WorkService } from "@/services/work-service";
 import { useEffect, useState } from "react";
 import {
     Trash2,
-    Calendar,
     MapPin,
     Briefcase,
     IndianRupeeIcon,
@@ -16,6 +15,8 @@ import {
     Ban,
     type LucideIcon,
     Eye,
+    CalendarDays,
+    CalendarPlus,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -26,9 +27,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
 import {
@@ -79,6 +78,28 @@ const TAB_CONFIG: { value: Bucket; label: string; Icon: LucideIcon }[] = [
 ];
 
 const ITEMS_PER_PAGE = 6;
+
+const formatDate = (value?: string) =>
+    value
+        ? new Date(value).toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        })
+        : null;
+
+// One-day work -> single date, multi-day work -> "start → end"
+const getWorkDateText = (work: WorkItem) => {
+    if (work.workType === 'oneDay') return formatDate(work.date);
+    const start = formatDate(work.startDate);
+    const end = formatDate(work.endDate);
+    if (start && end) return `${start} → ${end}`;
+    return start ?? end;
+};
+
+const getWorkDateLabel = (work: WorkItem) =>
+    work.workType === 'oneDay' ? 'Work Date' : 'Work Dates';
+
 
 interface ViewWorkModalProps {
     work: WorkItem;
@@ -155,40 +176,24 @@ function ViewWorkModal({ work, isOpen, onClose }: ViewWorkModalProps) {
                         </h3>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                            {work.startDate && (
+                            {work.createdAt && (
                                 <div className="space-y-1">
-                                    <Label className="text-muted-foreground">
-                                        Start Date
-                                    </Label>
-                                    <p className="text-sm text-foreground">
-                                        {new Date(
-                                            work.startDate
-                                        ).toLocaleDateString()}
-                                    </p>
+                                    <Label className="text-muted-foreground">Posted On</Label>
+                                    <p className="text-sm text-foreground">{formatDate(work.createdAt)}</p>
                                 </div>
                             )}
 
-                            {work.endDate && (
+                            {getWorkDateText(work) && (
                                 <div className="space-y-1">
-                                    <Label className="text-muted-foreground">
-                                        End Date
-                                    </Label>
-                                    <p className="text-sm text-foreground">
-                                        {new Date(
-                                            work.endDate
-                                        ).toLocaleDateString()}
-                                    </p>
+                                    <Label className="text-muted-foreground">{getWorkDateLabel(work)}</Label>
+                                    <p className="text-sm text-foreground">{getWorkDateText(work)}</p>
                                 </div>
                             )}
 
                             {work.budget !== undefined && (
                                 <div className="space-y-1">
-                                    <Label className="text-muted-foreground">
-                                        Budget
-                                    </Label>
-                                    <p className="text-sm font-semibold text-foreground">
-                                        ₹{work.budget}
-                                    </p>
+                                    <Label className="text-muted-foreground">Budget</Label>
+                                    <p className="text-sm font-semibold text-foreground">₹{work.budget}</p>
                                 </div>
                             )}
                         </div>
@@ -363,19 +368,19 @@ function WorkCard({
             </CardHeader>
 
             <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    {work.startDate && (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {work.createdAt && (
                         <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
-                            <span className="text-muted-foreground">Start:</span>
-                            <span className="text-foreground">{new Date(work.startDate).toLocaleDateString()}</span>
+                            <CalendarPlus className="h-4 w-4 shrink-0 text-muted-foreground" />
+                            <span className="text-muted-foreground">Posted:</span>
+                            <span className="text-foreground">{formatDate(work.createdAt)}</span>
                         </div>
                     )}
-                    {work.endDate && (
+                    {getWorkDateText(work) && (
                         <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
-                            <span className="text-muted-foreground">End:</span>
-                            <span className="text-foreground">{new Date(work.endDate).toLocaleDateString()}</span>
+                            <CalendarDays className="h-4 w-4 shrink-0 text-muted-foreground" />
+                            <span className="text-muted-foreground">{getWorkDateLabel(work)}:</span>
+                            <span className="text-foreground">{getWorkDateText(work)}</span>
                         </div>
                     )}
                     {work.budget !== undefined && (

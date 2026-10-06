@@ -27,8 +27,8 @@ export interface WorkItem {
   budget?: number;
   status?: string;
   progress?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface PaginationMeta {
