@@ -14,11 +14,11 @@ import {
 import {
   Home,
   Users,
-  UserCheck,
   UserPlus,
   ShieldAlert,
   CreditCard,
   CalendarClock,
+  BriefcaseBusiness,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -36,7 +36,7 @@ const items = [
   {
     title: "Workers",
     route: "/admin/dashboard/workers",
-    icon: UserCheck,
+    icon: BriefcaseBusiness,
   },
   {
     title: "New Appliers",

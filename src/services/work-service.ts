@@ -1,58 +1,8 @@
 import type { ApplyForWorkerDto } from "@/components/worker/apply-worker/worker-apply";
 import { api } from "./axios-instance/axios-instance";
 import { WORK_ENDPOINTS } from "@/constants/api-endpoints/work-endpoints";
-import type { MediaItem } from "./types/cloudinary.types";
 
-import type { MyWorksParams, WorkerAddress, WorkerAssignedWorksParams, LiveWorksParams, AdminBookingsParams, } from "./types/work-service.types";
-
-interface UpdateWorkDto {
-    workTitle?: string;
-    workCategory?: string;
-    workType?: string;
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-    budget?: number;
-    status?: string;
-    progress?: string;
-    workerId?: string;
-    manualAddress?: string;
-    landmark?: string;
-}
-
-interface PostWorkDto {
-    userId: string;
-    workTitle: string;
-    workCategory: string;
-    workType: string;
-
-    date?: string;
-    startDate?: string;
-    endDate?: string;
-    time: string;
-
-    voiceFile: MediaItem | null;
-    images: MediaItem[];
-    videos: MediaItem[];
-
-    description: string;
-    duration?: string;
-    budget?: string;
-
-    latitude: number;
-    longitude: number;
-
-    currentLocation?: string;
-    manualAddress?: string;
-    landmark?: string;
-
-    contactNumber: string;
-    petrolAllowance?: string;
-    extraRequirements?: string;
-    anythingElse?: string;
-
-    termsAccepted: boolean;
-}
+import type { MyWorksParams, WorkerAddress, WorkerAssignedWorksParams, LiveWorksParams, AdminBookingsParams, PostWorkDto, UpdateWorkDto, } from "./types/work-service.types";
 
 export const WorkService = {
 
@@ -92,7 +42,6 @@ export const WorkService = {
         if (filters?.longitude !== undefined) params.append('longitude', filters.longitude.toString());
         if (filters?.maxDistance !== undefined) params.append('maxDistance', filters.maxDistance.toString());
 
-        // return api.get(WORK_ENDPOINTS.GET_ALL_WORKS);
         return api.get(WORK_ENDPOINTS.GET_ALL_WORKS, { params: filters });
     },
 
