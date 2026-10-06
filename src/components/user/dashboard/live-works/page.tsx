@@ -3,11 +3,13 @@ import { socketService } from "@/services/chat-socket-service";
 import { AuthHelper } from "@/utils/auth-helper";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
-  Calendar, MapPin, Briefcase, IndianRupeeIcon,
+  Calendar, CalendarDays, CalendarPlus, MapPin, Briefcase, IndianRupeeIcon,
   Wrench, TrendingUp, Flag, MessageSquare, Clock,
   type LucideIcon,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -89,6 +91,15 @@ function ProgressDisplay({ progress }: { progress?: string }) {
   );
 }
 
+const formatDate = (value?: string) =>
+  value
+    ? new Date(value).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
+    : null;
+
 function LiveWorkCard({
   work,
   onChatWithWorker,
@@ -132,20 +143,41 @@ function LiveWorkCard({
 
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {work.startDate && (
+          {work.createdAt && (
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Start:</span>
-              <span>{new Date(work.startDate).toLocaleDateString()}</span>
+              <CalendarPlus className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">Work Created:</span>
+              <span>{formatDate(work.createdAt)}</span>
             </div>
           )}
-          {work.endDate && (
+
+          {work.workType === 'oneDay' && work.date && (
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">End:</span>
-              <span>{new Date(work.endDate).toLocaleDateString()}</span>
+              <CalendarDays className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">Work Date:</span>
+              <span>{formatDate(work.date)}</span>
             </div>
           )}
+
+          {work.workType === 'multipleDay' && (
+            <>
+              {work.startDate && (
+                <div className="flex items-center gap-2 text-sm">
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Start Date:</span>
+                  <span>{formatDate(work.startDate)}</span>
+                </div>
+              )}
+              {work.endDate && (
+                <div className="flex items-center gap-2 text-sm">
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">End Date:</span>
+                  <span>{formatDate(work.endDate)}</span>
+                </div>
+              )}
+            </>
+          )}
+
           {work.budget && (
             <div className="flex items-center gap-2 text-sm">
               <IndianRupeeIcon className="h-4 w-4 text-muted-foreground" />

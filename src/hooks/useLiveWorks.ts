@@ -17,8 +17,8 @@ export interface LiveWork {
   budget?: number;
   status?: string;
   progress?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface PaginationMeta {
@@ -40,6 +40,8 @@ export interface LiveWorksParams {
 }
 
 const emptyCounts: LiveWorkBucketCounts = { active: 0, completed: 0 };
+
+
 
 export function useLiveWorks(params: LiveWorksParams) {
   const [works, setWorks] = useState<LiveWork[]>([]);
