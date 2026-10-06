@@ -12,6 +12,7 @@ export interface Work {
   status?: string;
   progress?: string;
   budget?: number;
+  date?: string; 
   startDate?: string;
   endDate?: string;
   description?: string;
