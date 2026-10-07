@@ -13,6 +13,7 @@ import { ChatService } from "@/services/chat-service"
 import { AuthHelper } from "@/utils/auth-helper"
 
 import type { Work } from "../types/types"
+import { CopyIdButton } from "@/components/common/copy-id-button"
 
 interface WorkDetailsModalProps {
     isOpen: boolean
@@ -225,6 +226,23 @@ const WorkDetailsModal = ({
                 <div className="px-6 py-4 space-y-6">
                     {/* BASIC INFORMATION */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        {/* WORK ID */}
+                        {work.id && (
+                            <div className="md:col-span-2">
+                                <label className="text-sm font-medium text-muted-foreground">
+                                    Work ID
+                                </label>
+
+                                <div className="mt-1 flex items-center gap-1">
+                                    <span className="break-all font-mono text-xs text-foreground">
+                                        {work.id}
+                                    </span>
+                                    <CopyIdButton value={work.id} />
+                                </div>
+                            </div>
+                        )}
+
                         {/* WORK TYPE */}
                         <div>
                             <label className="text-sm font-medium text-muted-foreground">

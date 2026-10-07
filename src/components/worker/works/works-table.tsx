@@ -29,6 +29,7 @@ import type {
 } from "./types/types"
 
 import WorkDetailsModal from "./modals/WorkDetailsModal"
+import { CopyIdButton } from "@/components/common/copy-id-button"
 
 // GEOLOCATION
 const getPlaceFromCoordinates = async (
@@ -678,7 +679,7 @@ export default function WorkerWorksTable() {
               />
 
               <Input
-                placeholder="Search by title, category, location..."
+                placeholder="Search by title, category, location, ID..."
                 value={searchTerm}
                 onChange={(e) =>
                   setSearchTerm(
@@ -718,7 +719,7 @@ export default function WorkerWorksTable() {
                 DISTANCE FILTER
              */}
 
-          
+
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-muted-foreground" />
 
@@ -775,7 +776,7 @@ export default function WorkerWorksTable() {
                 STATUS FILTER
              */}
 
-          
+
 
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
@@ -873,6 +874,10 @@ export default function WorkerWorksTable() {
                       </th>
 
                       <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Work ID
+                      </th>
+
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         Location
                       </th>
 
@@ -958,6 +963,23 @@ export default function WorkerWorksTable() {
                                 )}
                               </div>
 
+                            </td>
+
+                            {/* WORK ID */}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {work.id ? (
+                                <div className="flex items-center gap-1">
+                                  <span
+                                    className="font-mono text-xs text-muted-foreground"
+                                    title={work.id}
+                                  >
+                                    #{work.id.slice(-6).toUpperCase()}
+                                  </span>
+                                  <CopyIdButton value={work.id} />
+                                </div>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">N/A</span>
+                              )}
                             </td>
 
                             {/* LOCATION */}
