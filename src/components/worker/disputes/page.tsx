@@ -12,8 +12,10 @@ import {
   CheckCircle2,
   Clock3,
   List,
+  Briefcase,
 } from 'lucide-react';
 
+import { CopyIdButton } from '@/components/common/copy-id-button';
 import { DisputeService } from '@/services/dispute-service';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -36,6 +38,7 @@ interface DisputeActionItem {
 
 interface Dispute {
   id: string;
+  workId: string;
   workTitle: string;
   complaintType: string;
   description: string;
@@ -144,6 +147,22 @@ function DisputeRow({ dispute }: { dispute: Dispute }) {
                     year: 'numeric',
                   })}
                 </span>
+
+                <span className="text-xs text-muted-foreground">
+                  {new Date(dispute.createdAt).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </span>
+
+                <span className="text-xs text-muted-foreground">
+                  •
+                </span>
+
+                <span className="font-mono text-xs text-muted-foreground">
+                  Work #{dispute.workId?.slice(-6).toUpperCase()}
+                </span>
               </div>
             </div>
           </div>
@@ -185,31 +204,29 @@ function DisputeRow({ dispute }: { dispute: Dispute }) {
 
             <div className="rounded-lg border bg-card p-4">
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+             
+              <div>
+                <p className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                  <Briefcase className="h-3.5 w-3.5" />
+                  Work
+                </p>
 
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground">
-                    Complaint Type
-                  </p>
+                <p className="mt-1 text-sm font-medium text-foreground">
+                  {dispute.workTitle}
+                </p>
+              </div>
 
-                  <p className="mt-1 text-sm font-medium text-foreground">
-                    {complaintLabel}
-                  </p>
-                </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">
+                  Work ID
+                </p>
 
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground">
-                    Status
-                  </p>
-
-                  <span
-                    className={`mt-1 inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium capitalize ${STATUS_STYLES[dispute.status]
-                      }`}
-                  >
-                    {dispute.status.replace('_', ' ')}
+                <div className="mt-1 flex items-center gap-1">
+                  <span className="break-all font-mono text-xs text-foreground">
+                    {dispute.workId}
                   </span>
+                  {dispute.workId && <CopyIdButton value={dispute.workId} />}
                 </div>
-
               </div>
 
               {/* Description */}
