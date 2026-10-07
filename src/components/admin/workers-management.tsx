@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-import {Eye,X,Search,BookmarkIcon,Loader2,MapPin,Mail,Phone,Briefcase,CalendarDays,} from "lucide-react";
-
+// import {Eye,X,Search,BookmarkIcon,Loader2,MapPin,Mail,Phone,Briefcase,CalendarDays,} from "lucide-react";
+import { Eye, X, Search, BookmarkIcon, Loader2, MapPin, Mail, Phone, Briefcase, CalendarDays, Copy, Check, Hash, } from "lucide-react";
 import { WorkService } from "@/services/work-service";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {Dialog,DialogContent,DialogDescription,DialogFooter,DialogHeader,DialogTitle,} from "@/components/ui/dialog";
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,} from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
@@ -29,6 +29,59 @@ interface Applier {
     };
     createdAt?: Date;
 }
+
+// Copy helper (falls back to execCommand when the Clipboard API is unavailable)
+const copyToClipboard = async (text: string): Promise<boolean> => {
+    try {
+        await navigator.clipboard.writeText(text);
+        return true;
+    } catch {
+        try {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            const ok = document.execCommand("copy");
+            document.body.removeChild(textarea);
+            return ok;
+        } catch {
+            return false;
+        }
+    }
+};
+
+// Small icon button that copies the given value
+const CopyIdButton = ({ value }: { value: string }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const ok = await copyToClipboard(value);
+        if (ok) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        }
+    };
+
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 shrink-0"
+            onClick={handleCopy}
+            title={copied ? "Copied" : "Copy ID"}
+        >
+            {copied ? (
+                <Check className="h-3.5 w-3.5 text-green-600" />
+            ) : (
+                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+            )}
+        </Button>
+    );
+};
 
 // Worker Details Dialog
 const WorkerDetailsDialog = ({
@@ -86,11 +139,10 @@ const WorkerDetailsDialog = ({
                             }
                         >
                             <span
-                                className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-                                    applier.isBlocked
-                                        ? "bg-current"
-                                        : "bg-green-600 dark:bg-green-400"
-                                }`}
+                                className={`mr-1.5 h-1.5 w-1.5 rounded-full ${applier.isBlocked
+                                    ? "bg-current"
+                                    : "bg-green-600 dark:bg-green-400"
+                                    }`}
                             />
                             {applier.isBlocked ? "Blocked" : "Active"}
                         </Badge>
@@ -108,6 +160,20 @@ const WorkerDetailsDialog = ({
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2">
+
+                            <InfoItem
+                                icon={Hash}
+                                label="Worker ID"
+                                value={
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className="break-all font-mono text-xs">
+                                            {applier.id}
+                                        </span>
+                                        <CopyIdButton value={applier.id} />
+                                    </div>
+                                }
+                            />
+
                             <InfoItem
                                 icon={Briefcase}
                                 label="Name"
@@ -148,8 +214,8 @@ const WorkerDetailsDialog = ({
                                 value={
                                     applier.createdAt
                                         ? new Date(
-                                              applier.createdAt
-                                          ).toLocaleDateString()
+                                            applier.createdAt
+                                        ).toLocaleDateString()
                                         : "N/A"
                                 }
                             />
@@ -488,6 +554,10 @@ export default function WorkersManagementComponent() {
                                     </th>
 
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                        Worker ID
+                                    </th>
+
+                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                                         Email
                                     </th>
 
@@ -528,6 +598,19 @@ export default function WorkersManagementComponent() {
                                                 </div>
                                             </td>
 
+                                            {/* Worker ID */}
+                                            <td className="whitespace-nowrap px-6 py-4">
+                                                <div className="flex items-center gap-1">
+                                                    <span
+                                                        className="font-mono text-xs text-muted-foreground"
+                                                        title={worker.id}
+                                                    >
+                                                        #{worker.id.slice(-6).toUpperCase()}
+                                                    </span>
+                                                    <CopyIdButton value={worker.id} />
+                                                </div>
+                                            </td>
+
                                             {/* Email */}
                                             <td className="px-6 py-4 text-sm text-muted-foreground">
                                                 {worker.email}
@@ -544,11 +627,10 @@ export default function WorkersManagementComponent() {
                                                     }
                                                 >
                                                     <span
-                                                        className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-                                                            worker.isBlocked
-                                                                ? "bg-destructive"
-                                                                : "bg-green-500"
-                                                        }`}
+                                                        className={`mr-1.5 h-1.5 w-1.5 rounded-full ${worker.isBlocked
+                                                            ? "bg-destructive"
+                                                            : "bg-green-500"
+                                                            }`}
                                                     />
 
                                                     {worker.isBlocked
