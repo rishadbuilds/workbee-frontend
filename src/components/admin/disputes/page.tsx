@@ -446,22 +446,22 @@ function buildActionOptions(
       },
   );
 
-  options.push(
-    worker.isBlacklisted
-      ? {
-        value: 'unblacklist_worker' as DisputeActionType,
-        label: 'Remove Worker Blacklist',
-        description: 'Remove permanent restriction',
-        icon: <ShieldOff className="h-4 w-4" />,
-      }
-      : {
-        value: 'blacklist_worker' as DisputeActionType,
-        label: 'Blacklist Worker',
-        description: 'Permanently restrict worker',
-        icon: <ShieldAlert className="h-4 w-4" />,
-        destructive: true,
-      },
-  );
+  // options.push(
+  //   worker.isBlacklisted
+  //     ? {
+  //       value: 'unblacklist_worker' as DisputeActionType,
+  //       label: 'Remove Worker Blacklist',
+  //       description: 'Remove permanent restriction',
+  //       icon: <ShieldOff className="h-4 w-4" />,
+  //     }
+  //     : {
+  //       value: 'blacklist_worker' as DisputeActionType,
+  //       label: 'Blacklist Worker',
+  //       description: 'Permanently restrict worker',
+  //       icon: <ShieldAlert className="h-4 w-4" />,
+  //       destructive: true,
+  //     },
+  // );
 
   options.push(
     user.isBlocked
@@ -480,22 +480,22 @@ function buildActionOptions(
       },
   );
 
-  options.push(
-    user.isBlacklisted
-      ? {
-        value: 'unblacklist_user' as DisputeActionType,
-        label: 'Remove Client Blacklist',
-        description: 'Remove permanent restriction',
-        icon: <ShieldOff className="h-4 w-4" />,
-      }
-      : {
-        value: 'blacklist_user' as DisputeActionType,
-        label: 'Blacklist Client',
-        description: 'Permanently restrict client',
-        icon: <ShieldAlert className="h-4 w-4" />,
-        destructive: true,
-      },
-  );
+  // options.push(
+  //   user.isBlacklisted
+  //     ? {
+  //       value: 'unblacklist_user' as DisputeActionType,
+  //       label: 'Remove Client Blacklist',
+  //       description: 'Remove permanent restriction',
+  //       icon: <ShieldOff className="h-4 w-4" />,
+  //     }
+  //     : {
+  //       value: 'blacklist_user' as DisputeActionType,
+  //       label: 'Blacklist Client',
+  //       description: 'Permanently restrict client',
+  //       icon: <ShieldAlert className="h-4 w-4" />,
+  //       destructive: true,
+  //     },
+  // );
 
   options.push({
     value: 'no_action' as DisputeActionType,
