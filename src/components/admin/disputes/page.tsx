@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { DisputeService } from '@/services/dispute-service';
 
-import type { DisputeActionType,WorkerSummary,UserSummary } from '@/services/types/dispute.types';
+import type { DisputeActionType, WorkerSummary, UserSummary } from '@/services/types/dispute.types';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -83,6 +83,8 @@ import {
   Image as ImageIcon,
   Video,
   Gavel,
+  Copy,
+  Check,
 } from 'lucide-react';
 
 import { getErrorMessage } from '@/utils/error-helper';
@@ -94,8 +96,12 @@ interface DisputeActionItem {
   takenAt: string;
 }
 
+
 interface DisputeListItem {
   id: string;
+  workId: string;
+  userId: string;
+  workerId: string;
   workTitle: string;
   complaintType: string;
   status: 'pending' | 'in_review' | 'resolved' | 'dismissed';
@@ -213,6 +219,43 @@ function EntityStatus({
   );
 }
 
+function CopyableId({ label, value }: { label: string; value: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard unavailable (e.g. non-https) - ignore
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-lg border bg-muted/20 px-3 py-2">
+      <div className="min-w-0">
+        <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
+        <p className="truncate font-mono text-xs text-foreground">{value}</p>
+      </div>
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="h-7 w-7 shrink-0"
+        onClick={handleCopy}
+      >
+        {copied ? (
+          <Check className="h-3.5 w-3.5 text-emerald-600" />
+        ) : (
+          <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+        )}
+      </Button>
+    </div>
+  );
+}
+
 function EntityCard({
   icon,
   roleLabel,
@@ -327,18 +370,16 @@ function ActionButton({
       variant={variant}
       disabled={disabled}
       onClick={onClick}
-      className={`h-auto min-h-[58px] justify-start gap-3 px-3 py-2.5 text-left ${
-        destructive
-          ? 'border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950 dark:hover:text-red-400'
-          : ''
-      }`}
+      className={`h-auto min-h-[58px] justify-start gap-3 px-3 py-2.5 text-left ${destructive
+        ? 'border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950 dark:hover:text-red-400'
+        : ''
+        }`}
     >
       <span
-        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
-          destructive
-            ? 'bg-red-50 dark:bg-red-950'
-            : 'bg-muted'
-        }`}
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${destructive
+          ? 'bg-red-50 dark:bg-red-950'
+          : 'bg-muted'
+          }`}
       >
         {icon}
       </span>
@@ -391,69 +432,69 @@ function buildActionOptions(
   options.push(
     worker.isBlocked
       ? {
-          value: 'unblock_worker' as DisputeActionType,
-          label: 'Unblock Worker',
-          description: 'Restore worker account access',
-          icon: <ShieldOff className="h-4 w-4" />,
-        }
+        value: 'unblock_worker' as DisputeActionType,
+        label: 'Unblock Worker',
+        description: 'Restore worker account access',
+        icon: <ShieldOff className="h-4 w-4" />,
+      }
       : {
-          value: 'block_worker' as DisputeActionType,
-          label: 'Block Worker',
-          description: 'Temporarily restrict worker access',
-          icon: <Ban className="h-4 w-4" />,
-          destructive: true,
-        },
+        value: 'block_worker' as DisputeActionType,
+        label: 'Block Worker',
+        description: 'Temporarily restrict worker access',
+        icon: <Ban className="h-4 w-4" />,
+        destructive: true,
+      },
   );
 
   options.push(
     worker.isBlacklisted
       ? {
-          value: 'unblacklist_worker' as DisputeActionType,
-          label: 'Remove Worker Blacklist',
-          description: 'Remove permanent restriction',
-          icon: <ShieldOff className="h-4 w-4" />,
-        }
+        value: 'unblacklist_worker' as DisputeActionType,
+        label: 'Remove Worker Blacklist',
+        description: 'Remove permanent restriction',
+        icon: <ShieldOff className="h-4 w-4" />,
+      }
       : {
-          value: 'blacklist_worker' as DisputeActionType,
-          label: 'Blacklist Worker',
-          description: 'Permanently restrict worker',
-          icon: <ShieldAlert className="h-4 w-4" />,
-          destructive: true,
-        },
+        value: 'blacklist_worker' as DisputeActionType,
+        label: 'Blacklist Worker',
+        description: 'Permanently restrict worker',
+        icon: <ShieldAlert className="h-4 w-4" />,
+        destructive: true,
+      },
   );
 
   options.push(
     user.isBlocked
       ? {
-          value: 'unblock_user' as DisputeActionType,
-          label: 'Unblock Client',
-          description: 'Restore client account access',
-          icon: <ShieldOff className="h-4 w-4" />,
-        }
+        value: 'unblock_user' as DisputeActionType,
+        label: 'Unblock Client',
+        description: 'Restore client account access',
+        icon: <ShieldOff className="h-4 w-4" />,
+      }
       : {
-          value: 'block_user' as DisputeActionType,
-          label: 'Block Client',
-          description: 'Temporarily restrict client access',
-          icon: <Ban className="h-4 w-4" />,
-          destructive: true,
-        },
+        value: 'block_user' as DisputeActionType,
+        label: 'Block Client',
+        description: 'Temporarily restrict client access',
+        icon: <Ban className="h-4 w-4" />,
+        destructive: true,
+      },
   );
 
   options.push(
     user.isBlacklisted
       ? {
-          value: 'unblacklist_user' as DisputeActionType,
-          label: 'Remove Client Blacklist',
-          description: 'Remove permanent restriction',
-          icon: <ShieldOff className="h-4 w-4" />,
-        }
+        value: 'unblacklist_user' as DisputeActionType,
+        label: 'Remove Client Blacklist',
+        description: 'Remove permanent restriction',
+        icon: <ShieldOff className="h-4 w-4" />,
+      }
       : {
-          value: 'blacklist_user' as DisputeActionType,
-          label: 'Blacklist Client',
-          description: 'Permanently restrict client',
-          icon: <ShieldAlert className="h-4 w-4" />,
-          destructive: true,
-        },
+        value: 'blacklist_user' as DisputeActionType,
+        label: 'Blacklist Client',
+        description: 'Permanently restrict client',
+        icon: <ShieldAlert className="h-4 w-4" />,
+        destructive: true,
+      },
   );
 
   options.push({
@@ -691,7 +732,7 @@ export default function DisputeResolution() {
     } catch (err) {
       setError(
         getErrorMessage(err) ||
-          'Failed to apply action. Please try again.',
+        'Failed to apply action. Please try again.',
       );
     } finally {
       setSubmitting(false);
@@ -701,12 +742,12 @@ export default function DisputeResolution() {
   const selectedAction =
     detail && confirmAction
       ? buildActionOptions(
-          detail.worker,
-          detail.user,
-        ).find(
-          (action) =>
-            action.value === confirmAction,
-        )
+        detail.worker,
+        detail.user,
+      ).find(
+        (action) =>
+          action.value === confirmAction,
+      )
       : undefined;
 
   return (
@@ -792,9 +833,8 @@ export default function DisputeResolution() {
           className="w-fit"
         >
           <RefreshCw
-            className={`mr-2 h-4 w-4 ${
-              loading ? 'animate-spin' : ''
-            }`}
+            className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''
+              }`}
           />
 
           Refresh
@@ -893,6 +933,17 @@ export default function DisputeResolution() {
                             dispute.createdAt,
                           ).toLocaleString()}
                         </span>
+
+                        <span>
+                          {new Date(dispute.createdAt).toLocaleString()}
+                        </span>
+
+                        <span>•</span>
+
+                        <span className="font-mono">
+                          Work #{dispute.workId.slice(-6).toUpperCase()}
+                        </span>
+
                       </div>
                     </div>
 
@@ -997,62 +1048,83 @@ export default function DisputeResolution() {
                 </Card>
 
                 {/* =================================================
+    REFERENCE IDS
+================================================= */}
+
+                <Card className="shadow-none">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <Gavel className="h-4 w-4 text-muted-foreground" />
+                      Reference IDs
+                    </CardTitle>
+                  </CardHeader>
+
+                  <CardContent>
+                    <div className="grid gap-2 sm:grid-cols-3">
+                      <CopyableId label="Work ID" value={detail.workId} />
+                      <CopyableId label="Worker ID" value={detail.workerId} />
+                      <CopyableId label="Client ID" value={detail.userId} />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* =================================================
                     EVIDENCE
                 ================================================= */}
 
                 {(detail.proofImages.length > 0 ||
                   detail.proofVideo) && (
-                  <Card className="shadow-none">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center gap-2 text-sm">
-                        <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                        Evidence
-                      </CardTitle>
-                    </CardHeader>
+                    <Card className="shadow-none">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center gap-2 text-sm">
+                          <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                          Evidence
+                        </CardTitle>
+                      </CardHeader>
 
-                    <CardContent>
-                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                        {detail.proofImages.map(
-                          (image) => (
-                            <a
-                              key={image}
-                              href={image}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
-                            >
-                              <img
-                                src={image}
-                                alt="Proof"
-                                className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                              />
-                            </a>
-                          ),
-                        )}
-
-                        {detail.proofVideo && (
-                          <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
-                            <video
-                              src={detail.proofVideo}
-                              className="h-full w-full object-cover"
-                              controls
-                            />
-
-                            <div className="pointer-events-none absolute left-2 top-2">
-                              <Badge
-                                variant="secondary"
-                                className="gap-1 bg-background/90"
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                          {detail.proofImages.map(
+                            (image) => (
+                              <a
+                                key={image}
+                                href={image}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
                               >
-                                <Video className="h-3 w-3" />
-                                Video
-                              </Badge>
+                                <img
+                                  src={image}
+                                  alt="Proof"
+                                  className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                />
+                              </a>
+                            ),
+                          )}
+
+                          {detail.proofVideo && (
+                            <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
+                              <video
+                                src={detail.proofVideo}
+                                className="h-full w-full object-cover"
+                                controls
+                              />
+
+                              <div className="pointer-events-none absolute left-2 top-2">
+                                <Badge
+                                  variant="secondary"
+                                  className="gap-1 bg-background/90"
+                                >
+                                  <Video className="h-3 w-3" />
+                                  Video
+                                </Badge>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                 {/* =================================================
                     PARTIES
@@ -1149,9 +1221,9 @@ export default function DisputeResolution() {
                             >
                               {index <
                                 detail.actions.length -
-                                  1 && (
-                                <div className="absolute left-[15px] top-8 h-full w-px bg-border" />
-                              )}
+                                1 && (
+                                  <div className="absolute left-[15px] top-8 h-full w-px bg-border" />
+                                )}
 
                               <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border bg-background">
                                 <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
@@ -1171,6 +1243,8 @@ export default function DisputeResolution() {
                                       action.takenAt,
                                     ).toLocaleString()}
                                   </span>
+
+
                                 </div>
 
                                 <p className="mt-1 text-sm text-muted-foreground">
@@ -1225,7 +1299,7 @@ export default function DisputeResolution() {
                           }
                           variant={
                             actionType ===
-                            action.value
+                              action.value
                               ? 'default'
                               : 'outline'
                           }
