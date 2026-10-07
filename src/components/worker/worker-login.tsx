@@ -33,7 +33,7 @@ export function WorkerLoginForm({
 }: React.ComponentProps<"div">) {
 
     const dispatch = useAppDispatch();
-    
+
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -113,7 +113,7 @@ export function WorkerLoginForm({
                     }
 
                     AuthHelper.setAuth(accessToken, refreshToken, worker);
-                    dispatch(setCredentials(worker)); 
+                    dispatch(setCredentials(worker));
                     toast.success(result.data.message || "Worker login successful");
                     navigate(AppRoutes.WORKER.DASHBOARD.DASH);
                 } else {
@@ -177,12 +177,12 @@ export function WorkerLoginForm({
                             <Field>
                                 <div className="flex items-center">
                                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                                    {/* <a
-                                        href="#"
-                                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                                    <a
+                                        onClick={() => navigate(AppRoutes.WORKER.FORGOT_PASSWORD)}
+                                        className="ml-auto inline-block cursor-pointer text-sm underline-offset-4 hover:underline"
                                     >
                                         Forgot your password?
-                                    </a> */}
+                                    </a>
                                 </div>
 
                                 <div className="relative">

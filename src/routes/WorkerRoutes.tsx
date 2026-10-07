@@ -15,31 +15,35 @@ import WorkerWallet from "@/components/worker/wallet/wallet";
 import WorkerAccountSettings from "@/components/worker/profile/account-settings";
 import WorkerDisputes from "@/components/worker/disputes/page";
 import Feedbacks from "@/components/worker/feedbacks/page";
+import WorkerForgotPasswordPage from "@/pages/worker/WorkerForgotPasswordPage";
+import WorkerResetPasswordPage from "@/pages/worker/WorkerResetPasswordPage";
 
 const WorkerRoutes = () => {
     return (
         <Routes>
             {/* Public Routes */}
-            <Route path={RouteSegments.WORKER.LOGIN} element={<WorkerLogin/>} />
-            <Route path={RouteSegments.WORKER.APPLY} element={<ApplyWorker/>} />
+            <Route path={RouteSegments.WORKER.LOGIN} element={<WorkerLogin />} />
+            <Route path={RouteSegments.WORKER.APPLY} element={<ApplyWorker />} />
+            <Route path={RouteSegments.WORKER.FORGOT_PASSWORD} element={<WorkerForgotPasswordPage />} />
+            <Route path={RouteSegments.WORKER.RESET_PASSWORD} element={<WorkerResetPasswordPage />} />
 
             {/* Protected Routes - Worker Only */}
-            <Route 
+            <Route
                 path={RouteSegments.WORKER.DASHBOARD}
                 element={
                     <ProtectedRoute allowedRoles={[UserRole.WORKER]}>
-                        <WorkerLayout/>
+                        <WorkerLayout />
                     </ProtectedRoute>
                 }
             >
-                <Route index element={<WorkerDashboard/>} />
-                <Route path={RouteSegments.WORKER.WORKS} element={<Works/>} />
-                <Route path={RouteSegments.WORKER.ACTIVE_WORKS} element={<ActiveWorks/>} />
-                <Route path={RouteSegments.WORKER.MESSAGES} element={<ClientMessages/>} />
-                <Route path={RouteSegments.WORKER.WALLET} element={<WorkerWallet/>} />
-                <Route path={RouteSegments.WORKER.ACCOUNT} element={<WorkerAccountSettings/>} />
-                <Route path={RouteSegments.WORKER.WORKER_DISPUTES} element={<WorkerDisputes/>} />
-                <Route path={RouteSegments.WORKER.FEEDBACKS} element={<Feedbacks/>} />
+                <Route index element={<WorkerDashboard />} />
+                <Route path={RouteSegments.WORKER.WORKS} element={<Works />} />
+                <Route path={RouteSegments.WORKER.ACTIVE_WORKS} element={<ActiveWorks />} />
+                <Route path={RouteSegments.WORKER.MESSAGES} element={<ClientMessages />} />
+                <Route path={RouteSegments.WORKER.WALLET} element={<WorkerWallet />} />
+                <Route path={RouteSegments.WORKER.ACCOUNT} element={<WorkerAccountSettings />} />
+                <Route path={RouteSegments.WORKER.WORKER_DISPUTES} element={<WorkerDisputes />} />
+                <Route path={RouteSegments.WORKER.FEEDBACKS} element={<Feedbacks />} />
             </Route>
         </Routes>
     )

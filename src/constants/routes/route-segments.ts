@@ -1,6 +1,6 @@
 export const RouteSegments = {
   USER: {
-    HOME:"/",
+    HOME: "/",
     LOGIN: "login",
     REGISTER: "register",
     OTP: "otp",
@@ -17,7 +17,7 @@ export const RouteSegments = {
     DISPUTES: "disputes",
     WHAT_IS_WORKBEE: "what-is-workbee",
   },
-  
+
   ADMIN: {
     LOGIN: "admin",
     DASHBOARD: "dashboard",
@@ -31,6 +31,8 @@ export const RouteSegments = {
 
   WORKER: {
     LOGIN: "worker-login",
+    FORGOT_PASSWORD: "forgot-password",
+    RESET_PASSWORD: "reset-password/:token",
     APPLY: "apply-worker",
     DASHBOARD: "worker-dashboard",
     WORKS: "works",

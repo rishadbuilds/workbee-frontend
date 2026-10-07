@@ -24,17 +24,19 @@ export const AppRoutes = {
         DASHBOARD: {
             DASH: "/admin/dashboard",
         },
-        
+
     },
 
     WORKER: {
         LOGIN: "/worker/worker-login",
         APPLY: "/worker/apply-worker",
+        FORGOT_PASSWORD: "/worker/forgot-password",
+        RESET_PASSWORD: "/worker/reset-password/:token",
         DASHBOARD: {
             DASH: "/worker/worker-dashboard",
-            CLIENT_MESSAGES:"/worker/worker-dashboard/client-messages",
-            ACCOUNT:"/worker/worker-dashboard/worker-account",
-            WORKER_DISPUTES:"/worker/worker-dashboard/disputes",
+            CLIENT_MESSAGES: "/worker/worker-dashboard/client-messages",
+            ACCOUNT: "/worker/worker-dashboard/worker-account",
+            WORKER_DISPUTES: "/worker/worker-dashboard/disputes",
         },
     },
 

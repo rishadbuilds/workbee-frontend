@@ -64,8 +64,8 @@ export const AuthService = {
     getUserProfileById: (userId: string) => {
         return api.get(AUTH_ENDPOINTS.AUTH.GET_USER_PROFILE_BY_ID(userId));
     },
-    updateUserProfile: (data: {name: string;phone: string;location?: string;bio?: string;}) => {
-        return api.patch(AUTH_ENDPOINTS.AUTH.UPDATE_USER_PROFILE,data);
+    updateUserProfile: (data: { name: string; phone: string; location?: string; bio?: string; }) => {
+        return api.patch(AUTH_ENDPOINTS.AUTH.UPDATE_USER_PROFILE, data);
     },
 
     // google Auth
@@ -99,6 +99,16 @@ export const AuthService = {
     //worker Login
     workerLogin: (data: { email: string, password: string }) => {
         return api.post(AUTH_ENDPOINTS.AUTH.WORKER.LOGIN, data)
+    },
+    
+    //worker forgot password
+    workerForgotPassword: (data: { email: string }) => {
+        return api.post(AUTH_ENDPOINTS.AUTH.WORKER.FORGOT_PASSWORD, data)
+    },
+
+    //worker reset password
+    workerResetPassword: (token: string, data: { newPassword: string }) => {
+        return api.post(AUTH_ENDPOINTS.AUTH.WORKER.RESET_PASSWORD(token), data)
     },
 
     //change worker pass
