@@ -26,6 +26,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useLiveWorks, type LiveWork } from "@/hooks/useLiveWorks";
+import type { Chat } from "@/components/worker/messages/types/messages.types";
+import { AppRoutes } from "@/constants/routes/app-routes";
 
 type LiveTab = 'active' | 'completed';
 
@@ -221,6 +223,9 @@ export default function LiveWorks() {
   const [activeTab, setActiveTab] = useState<LiveTab>('active');
   const [currentPage, setCurrentPage] = useState(1);
 
+  // const token = AuthHelper.getAccessToken();
+  const user = AuthHelper.getUser();
+  const userId = user?.id || AuthHelper.getUserId();
   const token = AuthHelper.getAccessToken();
 
   useEffect(() => {
@@ -275,17 +280,56 @@ export default function LiveWorks() {
 
   const handleChatWithWorker = async (work: LiveWork) => {
     try {
+
       const chatsRes = await ChatService.getMyChats();
-      const allChats = chatsRes.data.data || [];
-      if (allChats.length > 0) {
-        navigate('/user/user-dashboard/messages', {
-          state: { workTitle: work.workTitle, workId: work.id },
+      const allChats: Chat[] = chatsRes.data.data || [];
+
+
+      const existingChat = allChats.find(
+        (chat) => {
+          console.log("Checking chat:", {
+            chatUserId: chat.participants.userId,
+            chatWorkerId: chat.participants.workerId,
+            currentUserId: userId,
+            workWorkerId: work.workerId,
+          });
+
+          return (
+            chat.participants.userId === userId &&
+            chat.participants.workerId === work.workerId
+          );
+        }
+      );
+
+
+      if (!existingChat) {
+
+        const chatRes = await ChatService.createChat({
+          userId: userId!,
+          workerId: work.workerId,
         });
-      } else {
-        alert('No active chats found for this work.');
+
       }
+
+      const chat = existingChat;
+
+      if (!chat) {
+        throw new Error("Chat was not found or created");
+      }
+
+
+      navigate(AppRoutes.USER.DASHBOARD.MESSAGES, {
+        state: {
+          chatId: chat.id,
+          userId,
+          workerId: work.workerId,
+          workId: work.id,
+          workTitle: work.workTitle,
+        },
+      });
     } catch (err) {
-      console.error('Chat error:', err);
+      console.error("Chat error:", err);
+      alert("Failed to open chat. Please try again.");
     }
   };
 

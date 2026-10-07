@@ -5,6 +5,7 @@ import { getErrorMessage } from "@/utils/error-helper";
 export interface LiveWork {
   id: string;
   userId: string;
+  workerId: string;
   workTitle: string;
   workCategory: string;
   workType: string;
@@ -40,7 +41,6 @@ export interface LiveWorksParams {
 }
 
 const emptyCounts: LiveWorkBucketCounts = { active: 0, completed: 0 };
-
 
 
 export function useLiveWorks(params: LiveWorksParams) {
