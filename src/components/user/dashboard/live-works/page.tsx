@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
-  Calendar, CalendarDays, CalendarPlus, MapPin, Briefcase, IndianRupeeIcon,
+  CalendarDays, CalendarPlus, MapPin, Briefcase, IndianRupeeIcon,
   Wrench, TrendingUp, Flag, MessageSquare, Clock,
   type LucideIcon,
 } from "lucide-react";
@@ -198,12 +198,19 @@ function LiveWorkCard({
         <ProgressDisplay progress={work.progress} />
         <Separator />
 
-        <div className="flex gap-2 pt-1">
-          <Button variant="outline" onClick={() => onChatWithWorker(work)} className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            Chat with Worker
-          </Button>
-        </div>
+        {work.status !== "completed" && (
+          <div className="flex gap-2 pt-1">
+            <Button
+              variant="outline"
+              onClick={() => onChatWithWorker(work)}
+              className="flex items-center gap-2"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Chat with Worker
+            </Button>
+          </div>
+        )}
+
       </CardContent>
     </Card>
   );
