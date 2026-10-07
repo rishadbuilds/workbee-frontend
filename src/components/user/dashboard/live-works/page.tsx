@@ -200,18 +200,16 @@ function LiveWorkCard({
         <ProgressDisplay progress={work.progress} />
         <Separator />
 
-        {work.status !== "completed" && (
-          <div className="flex gap-2 pt-1">
-            <Button
-              variant="outline"
-              onClick={() => onChatWithWorker(work)}
-              className="flex items-center gap-2"
-            >
-              <MessageSquare className="h-4 w-4" />
-              Chat with Worker
-            </Button>
-          </div>
-        )}
+        <div className="flex gap-2 pt-1">
+          <Button
+            variant="outline"
+            onClick={() => onChatWithWorker(work)}
+            className="flex items-center gap-2"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Chat with Worker
+          </Button>
+        </div>
 
       </CardContent>
     </Card>
