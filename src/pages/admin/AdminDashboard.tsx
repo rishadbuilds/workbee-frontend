@@ -50,6 +50,39 @@ interface WorkStats {
     worksCompletedTotal: number;
 }
 
+interface RecentAssignedWork {
+    id: string;
+    workTitle: string;
+    workCategory: string;
+    workType: "oneDay" | "multipleDay";
+    date?: string;
+    startDate?: string;
+    endDate?: string;
+    status: string;
+    workerId: string;
+    workerName: string;
+}
+
+interface RecentApplier {
+    id: string;
+    name: string;
+    email: string;
+    city: string;
+    workTypes: string[];
+    createdAt: string;
+}
+
+interface WorkStats {
+    totalWorkers: number;
+    newWorkersThisMonth: number;
+    newWorkersLastMonth: number;
+    newAppliersCount: number;
+    activeJobsCount: number;
+    worksCompletedTotal: number;
+    recentAssignedWorks: RecentAssignedWork[];
+    recentAppliers: RecentApplier[];
+}
+
 interface PaymentStats {
     grossRevenue: number;
     platformEarnings: number;
@@ -74,6 +107,28 @@ function formatLakh(amount: number): string {
 function pctChange(current: number, previous: number): number | null {
     if (previous <= 0) return null;
     return Math.round(((current - previous) / previous) * 100);
+}
+
+function formatDate(value?: string): string {
+    if (!value) return "—";
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return value;
+    return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function formatWorkDate(w: RecentAssignedWork): string {
+    if (w.workType === "multipleDay") {
+        return `${formatDate(w.startDate)} – ${formatDate(w.endDate)}`;
+    }
+    return formatDate(w.date);
+}
+
+function WorkStatusBadge({ status }: { status: string }) {
+    return (
+        <Badge variant={status === "completed" ? "default" : "secondary"} className="capitalize">
+            {status.replace("-", " ")}
+        </Badge>
+    );
 }
 
 const chartConfig = {
@@ -509,6 +564,101 @@ const AdminDashboard = () => {
                                                     ₹{payout.workerPayout.toLocaleString("en-IN")}
                                                 </div>
                                                 <Badge variant="secondary" className="mt-1">Pending</Badge>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Recent Bookings</CardTitle>
+                        <CardDescription>Latest works assigned to workers</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {workLoading ? (
+                            <p className="text-sm text-muted-foreground">Loading…</p>
+                        ) : !workStats?.recentAssignedWorks?.length ? (
+                            <p className="text-sm text-muted-foreground">No bookings yet.</p>
+                        ) : (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Work</TableHead>
+                                        <TableHead>Worker</TableHead>
+                                        <TableHead className="text-right">Status</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {workStats.recentAssignedWorks.map((work) => (
+                                        <TableRow key={work.id}>
+                                            <TableCell>
+                                                <div className="font-medium">{work.workTitle}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {work.workCategory} · {formatWorkDate(work)}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {work.workerName}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <WorkStatusBadge status={work.status} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Last 5 new appliers */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>New Appliers</CardTitle>
+                        <CardDescription>Latest worker applications awaiting approval</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {workLoading ? (
+                            <p className="text-sm text-muted-foreground">Loading…</p>
+                        ) : !workStats?.recentAppliers?.length ? (
+                            <p className="text-sm text-muted-foreground">No pending applications.</p>
+                        ) : (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Applicant</TableHead>
+                                        <TableHead>Work types</TableHead>
+                                        <TableHead className="text-right">Applied</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {workStats.recentAppliers.map((applier) => (
+                                        <TableRow key={applier.id}>
+                                            <TableCell>
+                                                <div className="font-medium">{applier.name}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {applier.email}
+                                                    {applier.city ? ` · ${applier.city}` : ""}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {applier.workTypes.slice(0, 2).map((type) => (
+                                                        <Badge key={type} variant="outline" className="capitalize">
+                                                            {type}
+                                                        </Badge>
+                                                    ))}
+                                                    {applier.workTypes.length > 2 && (
+                                                        <Badge variant="outline">+{applier.workTypes.length - 2}</Badge>
+                                                    )}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right text-muted-foreground">
+                                                {formatDate(applier.createdAt)}
                                             </TableCell>
                                         </TableRow>
                                     ))}
