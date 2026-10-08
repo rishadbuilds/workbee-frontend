@@ -521,9 +521,9 @@ export default function WorkContent() {
 
     // A status edit can move the work into a different tab/bucket — refetch
     // rather than splice locally so counts and pagination stay correct.
-    const handleUpdated = () => {
-        refetch();
-    };
+    // const handleUpdated = () => {
+    //     refetch();
+    // };
 
     const handleDelete = async () => {
         if (!deleteWorkId) return;

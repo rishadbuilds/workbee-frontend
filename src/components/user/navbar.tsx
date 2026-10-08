@@ -31,7 +31,7 @@ import {
 const Navbar = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const profile = useAppSelector((state) => state.userProfile.profile);
+  // const profile = useAppSelector((state) => state.userProfile.profile);
 
   const navigate = useNavigate();
   const socketConnectedRef = useRef(false);

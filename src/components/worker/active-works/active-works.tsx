@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import type { DateRange } from "react-day-picker";
 import { startOfDay, endOfDay } from "date-fns";
 import {
-  Calendar, MapPin, Briefcase, IndianRupeeIcon,
+  MapPin, Briefcase, IndianRupeeIcon,
   Wrench, TrendingUp, Flag, MessageSquare, ListChecks, ClipboardList,
   type LucideIcon,
   CalendarPlus,

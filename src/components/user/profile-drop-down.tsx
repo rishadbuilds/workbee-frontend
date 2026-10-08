@@ -23,7 +23,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import type { IUser } from "workbee-common";
 import { AppRoutes } from "@/constants/routes/app-routes";
-import { IconLiveView } from "@tabler/icons-react";
 
 interface ProfileDropDownMenuProps {
     user: IUser;

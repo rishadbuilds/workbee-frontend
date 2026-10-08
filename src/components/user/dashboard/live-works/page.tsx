@@ -300,14 +300,14 @@ export default function LiveWorks() {
       );
 
 
-      if (!existingChat) {
+      // if (!existingChat) {
 
-        const chatRes = await ChatService.createChat({
-          userId: userId!,
-          workerId: work.workerId,
-        });
+      //   const chatRes = await ChatService.createChat({
+      //     userId: userId!,
+      //     workerId: work.workerId,
+      //   });
 
-      }
+      // }
 
       const chat = existingChat;
 
