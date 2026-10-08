@@ -30,10 +30,6 @@ export const AUTH_ENDPOINTS = {
             USER_STATS: "/auth/admin/user-stats",
         },
 
-        // WORKER: {
-        //     LOGIN: "/auth/worker-login",
-        //     CHANGE_PASSWORD: "/auth/change-worker-password"
-        // },
         WORKER: {
             LOGIN: "/auth/worker-login",
             FORGOT_PASSWORD: "/auth/worker-forgot-password",

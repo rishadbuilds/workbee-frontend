@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "
 
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
+import { toast } from "sonner";
 
 // Types
 interface Applier {
@@ -425,7 +426,7 @@ export default function WorkersManagementComponent() {
     // Block / unblock worker
     const handleBlockUnblock = async (workerId: string) => {
         if (!workerId) {
-            alert("Worker ID is missing");
+            toast.warning("Worker ID is missing");
             return;
         }
 
@@ -433,7 +434,7 @@ export default function WorkersManagementComponent() {
             const res = await WorkService.blockWorker(workerId);
 
             if (res.data.success) {
-                alert(
+                toast.info(
                     selectedApplier?.isBlocked
                         ? "Worker Unblocked"
                         : "Worker Blocked"
@@ -448,7 +449,7 @@ export default function WorkersManagementComponent() {
                 error
             );
 
-            alert("Error occurred while updating worker status");
+            toast.error("Error occurred while updating worker status");
         }
     };
 
