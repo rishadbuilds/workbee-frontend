@@ -733,7 +733,13 @@ const WorkDetailsModal = ({
                         Close
                     </Button>
 
-                    <Button variant="outline">
+                    {/* <Button variant="outline">
+                        Make an Offer
+                    </Button> */}
+                    <Button
+                        variant="outline"
+                        onClick={handleChatWithClient}
+                    >
                         Make an Offer
                     </Button>
 
